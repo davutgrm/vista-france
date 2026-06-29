@@ -26,14 +26,12 @@ export async function POST(req: NextRequest) {
 
   if (!file) return err("file alanı eksik", undefined, 400);
 
-  const t0 = Date.now();
+  // Dosyayı base64 data URL'e çevir — storage upload'u atla
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const base64 = buffer.toString("base64");
+  const imageUrl = `data:${file.type || "image/jpeg"};base64,${base64}`;
 
-  let imageUrl: string;
-  try {
-    imageUrl = await fal.storage.upload(file);
-  } catch (e: unknown) {
-    return err("fal.ai storage upload başarısız", String(e));
-  }
+  const t0 = Date.now();
 
   let result: Awaited<ReturnType<typeof fal.subscribe>>;
   try {
@@ -60,7 +58,7 @@ export async function POST(req: NextRequest) {
   }
 
   return NextResponse.json({
-    original_url: imageUrl,
+    original_url: "",
     enhanced_url: enhancedUrl,
     elapsed_s: parseFloat(elapsed),
     cost_usd: 0.05,
