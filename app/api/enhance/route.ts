@@ -4,14 +4,14 @@ import { NextRequest, NextResponse } from "next/server";
 export const runtime = "nodejs";
 export const maxDuration = 120;
 
-function err(msg: string, detail?: unknown, status = 500) {
-  console.error("[enhance]", msg, detail ?? "");
-  return NextResponse.json({ error: msg, detail: detail ?? null }, { status });
+function err(msg: string, status = 500) {
+  console.error("[enhance]", msg);
+  return NextResponse.json({ error: msg }, { status });
 }
 
 export async function POST(req: NextRequest) {
   if (!process.env.FAL_KEY) {
-    return err("FAL_KEY .env.local'de ayarlanmamış. https://fal.ai/dashboard/keys adresinden al.", undefined, 500);
+    return err("FAL_KEY .env.local'de ayarlanmamış. https://fal.ai/dashboard/keys adresinden al.", 500);
   }
 
   fal.config({ credentials: process.env.FAL_KEY });
@@ -21,12 +21,11 @@ export async function POST(req: NextRequest) {
     const form = await req.formData();
     file = form.get("file") as File | null;
   } catch (e) {
-    return err("FormData okunamadı", String(e), 400);
+    return err(`FormData okunamadı: ${String(e)}`, 400);
   }
 
-  if (!file) return err("file alanı eksik", undefined, 400);
+  if (!file) return err("file alanı eksik", 400);
 
-  // Dosyayı base64 data URL'e çevir — storage upload'u atla
   const buffer = Buffer.from(await file.arrayBuffer());
   const base64 = buffer.toString("base64");
   const imageUrl = `data:${file.type || "image/jpeg"};base64,${base64}`;
@@ -35,18 +34,18 @@ export async function POST(req: NextRequest) {
 
   let result: Awaited<ReturnType<typeof fal.subscribe>>;
   try {
-    result = await fal.subscribe("fal-ai/clarity-upscaler", {
+    // aura-sr: hızlı AI upscaler, base64 data URL destekler
+    result = await fal.subscribe("fal-ai/aura-sr", {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       input: {
         image_url: imageUrl,
-        prompt: "real estate interior photo, professional, bright, clean, high quality",
-        creativity: 0.30,
-        resemblance: 0.65,
-        num_inference_steps: 18,
+        upscaling_factor: 2,
+        overlapping_tiles: true,
       } as any,
     });
   } catch (e: unknown) {
-    return err("fal-ai/clarity-upscaler çağrısı başarısız", String(e));
+    // Hata mesajının tamamını döndür — UI'da görünsün
+    return err(`fal-ai/aura-sr başarısız: ${String(e)}`);
   }
 
   const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
@@ -54,14 +53,14 @@ export async function POST(req: NextRequest) {
   const enhancedUrl: string | null = data.image?.url ?? data.images?.[0]?.url ?? null;
 
   if (!enhancedUrl) {
-    return err("fal.ai görsel URL döndürmedi", data);
+    return err(`fal.ai URL döndürmedi. Ham yanıt: ${JSON.stringify(data)}`);
   }
 
   return NextResponse.json({
     original_url: "",
     enhanced_url: enhancedUrl,
     elapsed_s: parseFloat(elapsed),
-    cost_usd: 0.05,
-    model: "fal-ai/clarity-upscaler",
+    cost_usd: 0.03,
+    model: "fal-ai/aura-sr",
   });
 }
