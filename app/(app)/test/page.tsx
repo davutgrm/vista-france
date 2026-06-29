@@ -85,6 +85,15 @@ export default function TestPage() {
     setVideoError(null);
   }
 
+  async function safeJson(res: Response): Promise<Record<string, any>> {
+    const text = await res.text();
+    try {
+      return JSON.parse(text);
+    } catch {
+      throw new Error(`Sunucu hatası (${res.status}): ${text.slice(0, 200)}`);
+    }
+  }
+
   async function runEnhance() {
     if (!file) return;
     setEnhancing(true);
@@ -93,9 +102,9 @@ export default function TestPage() {
       const fd = new FormData();
       fd.append("file", file);
       const res  = await fetch("/api/enhance", { method: "POST", body: fd });
-      const data = await res.json();
+      const data = await safeJson(res);
       if (!res.ok) throw new Error(data.error ?? "Bilinmeyen hata");
-      setEnhanceResult(data);
+      setEnhanceResult(data as EnhanceResult);
     } catch (e: unknown) {
       setEnhanceError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -113,9 +122,9 @@ export default function TestPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ image_url: enhanceResult.enhanced_url, style: selectedStyle }),
       });
-      const data = await res.json();
+      const data = await safeJson(res);
       if (!res.ok) throw new Error(data.error ?? "Bilinmeyen hata");
-      setStageResult(data);
+      setStageResult(data as StageResult);
     } catch (e: unknown) {
       setStageError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -137,9 +146,9 @@ export default function TestPage() {
           prompt: "Smooth cinematic flyover of this furnished real estate property, professional quality",
         }),
       });
-      const data = await res.json();
+      const data = await safeJson(res);
       if (!res.ok) throw new Error(data.error ?? JSON.stringify(data.detail ?? data));
-      setVideoResult(data);
+      setVideoResult(data as VideoResult);
     } catch (e: unknown) {
       setVideoError(e instanceof Error ? e.message : String(e));
     } finally {

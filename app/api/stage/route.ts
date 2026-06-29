@@ -15,47 +15,51 @@ const STYLE_PROMPTS: Record<string, string> = {
     "Industrial loft interior, exposed concrete walls, dark metal furniture, Edison pendant lights, urban aesthetic, professional real estate photography, photorealistic",
 };
 
+function err(msg: string, detail?: unknown, status = 500) {
+  console.error("[stage]", msg, detail ?? "");
+  return NextResponse.json({ error: msg, detail: detail ?? null }, { status });
+}
+
 export async function POST(req: NextRequest) {
   if (!process.env.FAL_KEY) {
-    return NextResponse.json(
-      { error: "FAL_KEY .env.local'de ayarlanmamış" },
-      { status: 500 }
-    );
+    return err("FAL_KEY .env.local'de ayarlanmamış", undefined, 500);
   }
 
   fal.config({ credentials: process.env.FAL_KEY });
 
-  const { image_url, style = "scandinavian", strength = 0.65 } =
-    await req.json() as { image_url?: string; style?: string; strength?: number };
-
-  if (!image_url) {
-    return NextResponse.json({ error: "image_url gerekli" }, { status: 400 });
+  let body: { image_url?: string; style?: string; strength?: number };
+  try {
+    body = await req.json();
+  } catch (e) {
+    return err("İstek gövdesi JSON değil", String(e), 400);
   }
+
+  const { image_url, style = "scandinavian", strength = 0.65 } = body;
+  if (!image_url) return err("image_url gerekli", undefined, 400);
 
   const prompt = STYLE_PROMPTS[style] ?? STYLE_PROMPTS.scandinavian;
   const t0 = Date.now();
 
-  const result = await fal.subscribe("fal-ai/flux/dev/image-to-image", {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    input: {
-      image_url,
-      prompt,
-      strength,          // 0.65 = oda yapısını koru, mobilyayı değiştir
-      num_inference_steps: 28,
-      guidance_scale: 3.5,
-    } as any,
-  });
+  let result: Awaited<ReturnType<typeof fal.subscribe>>;
+  try {
+    result = await fal.subscribe("fal-ai/flux/dev/image-to-image", {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      input: {
+        image_url,
+        prompt,
+        strength,
+        num_inference_steps: 28,
+        guidance_scale: 3.5,
+      } as any,
+    });
+  } catch (e: unknown) {
+    return err("fal-ai/flux/dev/image-to-image çağrısı başarısız", String(e));
+  }
 
   const data = result.data as Record<string, any>;
-  const stagedUrl: string | undefined =
-    data.images?.[0]?.url ?? data.image?.url;
+  const stagedUrl: string | null = data.images?.[0]?.url ?? data.image?.url ?? null;
 
-  if (!stagedUrl) {
-    return NextResponse.json(
-      { error: "fal.ai görsel URL döndürmedi", detail: data },
-      { status: 502 }
-    );
-  }
+  if (!stagedUrl) return err("fal.ai görsel URL döndürmedi", data, 502);
 
   const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
 
@@ -63,7 +67,6 @@ export async function POST(req: NextRequest) {
     staged_url: stagedUrl,
     style,
     elapsed_s: parseFloat(elapsed),
-    // fal-ai/flux/dev img2img: ~$0.025/görsel
     cost_usd: 0.025,
     model: "fal-ai/flux/dev/image-to-image",
   });
