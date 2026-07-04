@@ -32,3 +32,6 @@ next-env.d.ts
 # large media — serve from CDN instead
 /videos/
 /setup-guide/
+
+.vercel
+.env*

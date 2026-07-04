@@ -1,17 +1,37 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import appConfig from "@/app.config";
 import { Logo } from "@/components/ui/logo";
 import { Icon } from "@/components/ui/icon";
 import { useLang } from "@/components/i18n/language-provider";
 import { cn } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/client";
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { t, ui } = useLang();
+  const [user, setUser] = useState<{ name: string; email: string; initials: string } | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user: u } }) => {
+      if (!u) return;
+      const name = (u.user_metadata?.full_name as string | undefined) || u.email?.split("@")[0] || "?";
+      const initials = name.split(" ").map((n: string) => n[0] ?? "").join("").toUpperCase().slice(0, 2);
+      setUser({ name, email: u.email ?? "", initials });
+    });
+  }, []);
+
+  async function handleLogout() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+  }
 
   return (
     <aside className="hidden bg-sidebar text-sidebar-foreground md:flex md:w-64 md:flex-col">
@@ -45,20 +65,20 @@ export function Sidebar() {
 
       <div className="border-t border-sidebar-border p-3">
         <div className="flex items-center gap-3 rounded-lg px-2 py-1.5">
-          <span className="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-sm font-semibold">
-            AJ
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white/10 text-sm font-semibold">
+            {user?.initials ?? "…"}
           </span>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium">Alex Jordan</p>
-            <p className="truncate text-xs text-sidebar-muted">{ui.account}</p>
+            <p className="truncate text-sm font-medium">{user?.name ?? "…"}</p>
+            <p className="truncate text-xs text-sidebar-muted">{user?.email ?? ui.account}</p>
           </div>
-          <Link
-            href="/login"
+          <button
+            onClick={handleLogout}
             aria-label={ui.logout}
             className="grid h-8 w-8 place-items-center rounded-md text-sidebar-muted transition-colors hover:bg-white/5 hover:text-sidebar-foreground"
           >
             <LogOut className="h-4 w-4" />
-          </Link>
+          </button>
         </div>
       </div>
     </aside>

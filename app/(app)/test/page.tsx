@@ -1,12 +1,16 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { Wand2, Clapperboard, Armchair, Upload, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { useState, useRef, useEffect, useCallback, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Wand2, Clapperboard, Armchair, Upload, Loader2, AlertCircle, CheckCircle2, Download, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
 
 interface EnhanceResult {
   original_url: string;
   enhanced_url: string;
+  width: number | null;
+  height: number | null;
   elapsed_s: number;
   cost_usd: number;
   model: string;
@@ -16,7 +20,7 @@ interface StageResult {
   staged_url: string;
   style: string;
   elapsed_s: number;
-  cost_usd: number;
+  cost_usd?: number;
   model: string;
 }
 
@@ -45,7 +49,7 @@ function ErrorBox({ msg }: { msg: string }) {
   );
 }
 
-function Badge({ label }: { label: string }) {
+function StatusBadge({ label }: { label: string }) {
   return (
     <span className="rounded-full bg-success/15 px-3 py-1 text-xs font-medium text-success">
       {label}
@@ -53,7 +57,51 @@ function Badge({ label }: { label: string }) {
   );
 }
 
+async function downloadFile(url: string, filename: string) {
+  const proxyUrl = `/api/download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(filename)}`;
+  try {
+    const res = await fetch(proxyUrl);
+    if (!res.ok) throw new Error("proxy error");
+    const blob = await res.blob();
+    const objUrl = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = objUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(objUrl);
+  } catch {
+    window.open(url, "_blank", "noopener");
+  }
+}
+
+function DownloadButton({ url, filename }: { url: string; filename: string }) {
+  const [busy, setBusy] = useState(false);
+  return (
+    <button
+      onClick={async () => { setBusy(true); await downloadFile(url, filename); setBusy(false); }}
+      disabled={busy}
+      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground shadow-sm transition hover:bg-muted disabled:opacity-50"
+    >
+      {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
+      {busy ? "İndiriliyor…" : "İndir"}
+    </button>
+  );
+}
+
 export default function TestPage() {
+  return (
+    <Suspense>
+      <TestPageInner />
+    </Suspense>
+  );
+}
+
+function TestPageInner() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
   const [file, setFile]       = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
@@ -70,7 +118,49 @@ export default function TestPage() {
   const [videoResult, setVideoResult]   = useState<VideoResult | null>(null);
   const [videoError, setVideoError]     = useState<string | null>(null);
 
+  const [listingId, setListingId]           = useState<string | null>(searchParams.get("listing"));
+  const [listingAddress, setListingAddress] = useState<string | null>(null);
+  const [saveError, setSaveError]           = useState<string | null>(null);
+
   const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!listingId) return;
+    const supabase = createClient();
+    supabase.from("listings").select("address").eq("id", listingId).single()
+      .then(({ data }) => { if (data) setListingAddress(data.address as string); });
+  }, [listingId]);
+
+  // Ensures every generation is tied to a real, persisted listing row —
+  // creates one on first use if the page was opened without ?listing=<id>.
+  const ensureListingId = useCallback(async (fileName?: string): Promise<string> => {
+    if (listingId) return listingId;
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("Oturum açık değil, kaydedilemedi");
+    const address = fileName ? `Yeni ilan · ${fileName}` : `Yeni ilan · ${new Date().toLocaleDateString("tr-TR")}`;
+    const { data, error } = await supabase.from("listings")
+      .insert({ user_id: user.id, address })
+      .select("id, address")
+      .single();
+    if (error || !data) throw new Error(error?.message ?? "İlan oluşturulamadı");
+    setListingId(data.id);
+    setListingAddress(data.address as string);
+    router.replace(`/test?listing=${data.id}`);
+    return data.id as string;
+  }, [listingId, router]);
+
+  async function persistToListing(fields: Record<string, unknown>, fileName?: string) {
+    try {
+      const id = await ensureListingId(fileName);
+      const supabase = createClient();
+      const { error } = await supabase.from("listings").update(fields).eq("id", id);
+      if (error) throw new Error(error.message);
+      setSaveError(null);
+    } catch (e: unknown) {
+      setSaveError(e instanceof Error ? e.message : String(e));
+    }
+  }
 
   function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
@@ -85,7 +175,7 @@ export default function TestPage() {
     setVideoError(null);
   }
 
-  async function safeJson(res: Response): Promise<Record<string, any>> {
+  async function safeJson(res: Response): Promise<Record<string, unknown>> {
     const text = await res.text();
     try {
       return JSON.parse(text);
@@ -101,10 +191,48 @@ export default function TestPage() {
     try {
       const fd = new FormData();
       fd.append("file", file);
-      const res  = await fetch("/api/enhance", { method: "POST", body: fd });
-      const data = await safeJson(res);
-      if (!res.ok) throw new Error(data.error ?? "Bilinmeyen hata");
-      setEnhanceResult(data as EnhanceResult);
+      const res = await fetch("/api/enhance", { method: "POST", body: fd });
+      const submitted = await safeJson(res);
+      if (!res.ok) {
+        const detail = submitted.detail ? ` → ${typeof submitted.detail === "string" ? submitted.detail : JSON.stringify(submitted.detail)}` : "";
+        throw new Error(((submitted.error as string) ?? "Bilinmeyen hata") + detail);
+      }
+
+      const { status_url, response_url, original_url } = submitted as {
+        status_url: string; response_url: string; original_url: string;
+      };
+      if (!status_url || !response_url) throw new Error("İyileştirme başlatılamadı: " + JSON.stringify(submitted));
+
+      const t0 = Date.now();
+      while (true) {
+        await new Promise((r) => setTimeout(r, 4000));
+        const pollRes = await fetch(
+          `/api/enhance?status_url=${encodeURIComponent(status_url)}&response_url=${encodeURIComponent(response_url)}&original_url=${encodeURIComponent(original_url)}`
+        );
+        const poll = await safeJson(pollRes);
+        if (!pollRes.ok) {
+          const detail = poll.detail ? ` → ${typeof poll.detail === "string" ? poll.detail : JSON.stringify(poll.detail)}` : "";
+          throw new Error(((poll.error as string) ?? "Polling hatası") + detail);
+        }
+
+        if (poll.status === "completed") {
+          const enhanced_url = poll.enhanced_url as string;
+          setEnhanceResult({
+            original_url: poll.original_url as string,
+            enhanced_url,
+            width: poll.width as number | null,
+            height: poll.height as number | null,
+            elapsed_s: parseFloat(((Date.now() - t0) / 1000).toFixed(1)),
+            cost_usd: poll.cost_usd as number ?? 0.03,
+            model: poll.model as string ?? "",
+          });
+          await persistToListing({ enhanced_url, status: "enhancing", photos: 1 }, file.name);
+          break;
+        }
+        if (poll.status === "failed" || poll.status === "error") {
+          throw new Error("İyileştirme işlemi başarısız");
+        }
+      }
     } catch (e: unknown) {
       setEnhanceError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -117,14 +245,66 @@ export default function TestPage() {
     setStaging(true);
     setStageError(null);
     try {
-      const res  = await fetch("/api/stage", {
+      const res = await fetch("/api/stage", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image_url: enhanceResult.enhanced_url, style: selectedStyle }),
+        body: JSON.stringify({
+          image_url: enhanceResult.enhanced_url,
+          style: selectedStyle,
+          img_w: enhanceResult.width,
+          img_h: enhanceResult.height,
+        }),
       });
-      const data = await safeJson(res);
-      if (!res.ok) throw new Error(data.error ?? "Bilinmeyen hata");
-      setStageResult(data as StageResult);
+      const submitted = await safeJson(res);
+      if (!res.ok) {
+        const detail = submitted.detail ? ` → ${typeof submitted.detail === "string" ? submitted.detail : JSON.stringify(submitted.detail)}` : "";
+        throw new Error(((submitted.error as string) ?? "Bilinmeyen hata") + detail);
+      }
+
+      const { style } = submitted as { request_id: string; style: string; status_url: string; response_url: string };
+      let status_url = submitted.status_url as string;
+      let response_url = submitted.response_url as string;
+      if (!status_url || !response_url) throw new Error("Staging başlatılamadı: " + JSON.stringify(submitted));
+
+      let phase: "stage" | "sharpen" = "stage";
+      let fallbackUrl: string | undefined;
+
+      const t0 = Date.now();
+      while (true) {
+        await new Promise((r) => setTimeout(r, 4000));
+        const qs = new URLSearchParams({ status_url, response_url, phase });
+        if (fallbackUrl) qs.set("fallback_url", fallbackUrl);
+        const pollRes = await fetch(`/api/stage?${qs.toString()}`);
+        const poll = await safeJson(pollRes);
+        if (!pollRes.ok) {
+          const detail = poll.detail ? ` → ${typeof poll.detail === "string" ? poll.detail : JSON.stringify(poll.detail)}` : "";
+          throw new Error(((poll.error as string) ?? "Polling hatası") + detail);
+        }
+
+        if (poll.status === "processing" && poll.phase === "sharpen") {
+          phase = "sharpen";
+          status_url = poll.status_url as string;
+          response_url = poll.response_url as string;
+          fallbackUrl = poll.fallback_url as string;
+          continue;
+        }
+
+        if (poll.status === "completed") {
+          const staged_url = poll.staged_url as string;
+          setStageResult({
+            staged_url,
+            style,
+            elapsed_s: parseFloat(((Date.now() - t0) / 1000).toFixed(1)),
+            cost_usd: poll.cost_usd as number ?? 0.05,
+            model: poll.model as string ?? "",
+          });
+          await persistToListing({ staged_url, status: "staged" });
+          break;
+        }
+        if (poll.status === "failed" || poll.status === "error") {
+          throw new Error("Staging işlemi başarısız");
+        }
+      }
     } catch (e: unknown) {
       setStageError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -143,12 +323,40 @@ export default function TestPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           image_url: imageUrl,
-          prompt: "Smooth cinematic flyover of this furnished real estate property, professional quality",
+          prompt: "Smooth, continuous camera movement panning slowly across the room from left to right, like a real estate walkthrough video. Natural depth and parallax between foreground and background. Room and furniture must stay structurally identical to the source image throughout - no morphing, no new objects appearing, no walls or windows changing shape.",
         }),
       });
-      const data = await safeJson(res);
-      if (!res.ok) throw new Error(data.error ?? JSON.stringify(data.detail ?? data));
-      setVideoResult(data as VideoResult);
+      const submitted = await safeJson(res);
+      if (!res.ok) throw new Error((submitted.error as string) ?? JSON.stringify(submitted.detail ?? submitted));
+
+      const { task_id } = submitted as { task_id: string };
+      if (!task_id) throw new Error("Video görevi başlatılamadı: " + JSON.stringify(submitted));
+
+      const t0 = Date.now();
+      const MAX_WAIT_MS = 10 * 60 * 1000; // Kling render bazen birkaç dakika sürebilir
+      while (true) {
+        if (Date.now() - t0 > MAX_WAIT_MS) throw new Error("Video üretimi 10 dakikada tamamlanamadı");
+        await new Promise((r) => setTimeout(r, 5000));
+
+        const pollRes = await fetch(`/api/video?task_id=${encodeURIComponent(task_id)}`);
+        const poll = await safeJson(pollRes);
+        if (!pollRes.ok) {
+          const detail = poll.detail ? ` → ${typeof poll.detail === "string" ? poll.detail : JSON.stringify(poll.detail)}` : "";
+          throw new Error(((poll.error as string) ?? "Polling hatası") + detail);
+        }
+
+        if (poll.status === "completed") {
+          const video_url = poll.video_url as string;
+          setVideoResult({
+            video_url,
+            elapsed_s: parseFloat(((Date.now() - t0) / 1000).toFixed(1)),
+            cost_usd: poll.cost_usd as number ?? 0.20,
+            model: poll.model as string ?? "",
+          });
+          await persistToListing({ video_url, video: true, status: "ready" });
+          break;
+        }
+      }
     } catch (e: unknown) {
       setVideoError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -156,38 +364,25 @@ export default function TestPage() {
     }
   }
 
-  const totalCost =
-    (enhanceResult?.cost_usd ?? 0) +
-    (stageResult?.cost_usd ?? 0) +
-    (videoResult?.cost_usd ?? 0);
-
   return (
     <div className="mx-auto max-w-4xl space-y-8">
       {/* Başlık */}
       <div>
-        <h2 className="font-display text-2xl font-semibold tracking-tight">API Test Stüdyosu</h2>
+        <h2 className="font-display text-2xl font-semibold tracking-tight">Stüdyo Testi</h2>
         <p className="text-sm text-muted-foreground">
-          fal.ai iyileştirme · fal.ai flux/dev staging · kie.ai video — gerçek anahtarlarla test et.
+          Fotoğraf yükle, iyileştir, döşe ve tanıtım videosu üret.
         </p>
-      </div>
-
-      {/* API anahtar hatırlatıcısı */}
-      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-muted/40 p-4 text-sm">
-        <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Anahtarlar</span>
-        {[
-          { label: "fal.ai", key: "FAL_KEY" },
-          { label: "kie.ai", key: "KIE_API_KEY" },
-        ].map((a) => (
-          <div key={a.key} className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2">
-            <span className="font-medium">{a.label}</span>
-            <span className="text-xs text-muted-foreground">({a.key})</span>
-          </div>
-        ))}
+        {listingAddress && (
+          <p className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-success">
+            <Save className="h-3.5 w-3.5" /> Sonuçlar &ldquo;{listingAddress}&rdquo; ilanına kaydediliyor
+          </p>
+        )}
+        {saveError && <ErrorBox msg={`Sonuç ilana kaydedilemedi: ${saveError}`} />}
       </div>
 
       {/* ── Adım 1: Yükle & İyileştir ── */}
       <section className="rounded-2xl border border-border bg-card p-6 shadow-soft">
-        <h3 className="mb-4 font-semibold">1 · Fotoğraf yükle → fal.ai clarity-upscaler</h3>
+        <h3 className="mb-4 font-semibold">1 · Fotoğraf yükle & iyileştir</h3>
 
         <div
           role="button" tabIndex={0}
@@ -214,7 +409,7 @@ export default function TestPage() {
             <p className="truncate text-sm text-muted-foreground">{file.name} · {(file.size / 1024).toFixed(0)} KB</p>
             <Button onClick={runEnhance} disabled={enhancing} className="shrink-0 gap-2">
               {enhancing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
-              {enhancing ? "İyileştiriliyor…" : "fal.ai ile iyileştir"}
+              {enhancing ? "İyileştiriliyor…" : "İyileştir"}
             </Button>
           </div>
         )}
@@ -229,7 +424,7 @@ export default function TestPage() {
               <CheckCircle2 className="h-5 w-5 text-success" />
               2 · İyileştirme sonucu
             </h3>
-            <Badge label={`${enhanceResult.elapsed_s}s · ~$${enhanceResult.cost_usd.toFixed(2)}`} />
+            <StatusBadge label={`${enhanceResult.elapsed_s}s`} />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -239,12 +434,14 @@ export default function TestPage() {
               <img src={preview!} alt="Orijinal" className="w-full rounded-lg border border-border object-contain" />
             </div>
             <div>
-              <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">İyileştirilmiş</p>
+              <div className="mb-2 flex items-center justify-between">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">İyileştirilmiş</p>
+                <DownloadButton url={enhanceResult.enhanced_url} filename="enhanced.jpg" />
+              </div>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={enhanceResult.enhanced_url} alt="İyileştirilmiş" className="w-full rounded-lg border border-primary/30 object-contain" />
             </div>
           </div>
-          <p className="mt-2 text-xs text-muted-foreground">Model: {enhanceResult.model}</p>
         </section>
       )}
 
@@ -257,10 +454,9 @@ export default function TestPage() {
                 <CheckCircle2 className="h-5 w-5 text-success" />
                 3 · Staging sonucu
               </span>
-            ) : "3 · fal.ai flux/dev ile sanal staging"}
+            ) : "3 · Sanal staging"}
           </h3>
 
-          {/* Stil seçici */}
           {!stageResult && (
             <div className="mb-4 flex flex-wrap gap-2">
               {STYLES.map((s) => (
@@ -282,7 +478,7 @@ export default function TestPage() {
           {stageResult ? (
             <>
               <div className="mb-3 flex justify-end">
-                <Badge label={`${stageResult.elapsed_s}s · ~$${stageResult.cost_usd.toFixed(2)}`} />
+                <StatusBadge label={`${stageResult.elapsed_s}s`} />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -291,14 +487,16 @@ export default function TestPage() {
                   <img src={enhanceResult.enhanced_url} alt="İyileştirilmiş" className="w-full rounded-lg border border-border object-contain" />
                 </div>
                 <div>
-                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Staged · {STYLES.find((s) => s.key === stageResult.style)?.label}
-                  </p>
+                  <div className="mb-2 flex items-center justify-between">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      Staged · {STYLES.find((s) => s.key === stageResult.style)?.label}
+                    </p>
+                    <DownloadButton url={stageResult.staged_url} filename={`staged-${stageResult.style}.jpg`} />
+                  </div>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={stageResult.staged_url} alt="Staged" className="w-full rounded-lg border border-primary/30 object-contain" />
                 </div>
               </div>
-              <p className="mt-2 text-xs text-muted-foreground">Model: {stageResult.model}</p>
               <button
                 onClick={() => { setStageResult(null); setStageError(null); setVideoResult(null); }}
                 className="mt-3 text-xs text-muted-foreground underline"
@@ -324,69 +522,34 @@ export default function TestPage() {
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <h3 className="flex items-center gap-2 font-semibold">
                   <CheckCircle2 className="h-5 w-5 text-success" />
-                  4 · Video sonucu
+                  4 · Tanıtım videosu
                 </h3>
-                <Badge label={`${videoResult.elapsed_s}s · ~$${videoResult.cost_usd.toFixed(2)}`} />
+                <StatusBadge label={`${videoResult.elapsed_s}s`} />
               </div>
               <video src={videoResult.video_url} controls autoPlay loop className="w-full rounded-lg border border-border" />
-              <p className="mt-2 text-xs text-muted-foreground">Model: {videoResult.model}</p>
+              <div className="mt-3 flex items-center justify-between">
+                <p className="text-xs text-muted-foreground">
+                  {stageResult ? "Staged görsel" : "İyileştirilmiş görsel"} kaynak alındı
+                </p>
+                <DownloadButton url={videoResult.video_url} filename="tanitim-videosu.mp4" />
+              </div>
             </>
           ) : (
             <>
-              <h3 className="mb-4 font-semibold">4 · kie.ai ile drone-tarzı video</h3>
+              <h3 className="mb-4 font-semibold">4 · Tanıtım videosu üret</h3>
               <p className="mb-4 text-sm text-muted-foreground">
-                {stageResult ? "Staged görsel" : "İyileştirilmiş görsel"} kullanılacak → 5 saniyelik tanıtım videosu
+                {stageResult ? "Staged görsel" : "İyileştirilmiş görsel"} kaynak alınarak 5 saniyelik tanıtım videosu üretilir.
               </p>
               <Button onClick={runVideo} disabled={generating} className="gap-2">
                 {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Clapperboard className="h-4 w-4" />}
-                {generating ? "Video üretiliyor… (60-120s)" : "kie.ai ile video üret"}
+                {generating ? "Video üretiliyor…" : "Tanıtım videosu üret"}
               </Button>
               {generating && (
-                <p className="mt-2 text-xs text-muted-foreground">60-120 saniye sürebilir. Sayfa açık kalsın.</p>
+                <p className="mt-2 text-xs text-muted-foreground">60 saniye - birkaç dakika sürebilir. Sayfa açık kalsın.</p>
               )}
             </>
           )}
           {videoError && <ErrorBox msg={videoError} />}
-        </section>
-      )}
-
-      {/* ── Maliyet özeti ── */}
-      {(enhanceResult ?? stageResult ?? videoResult) && (
-        <section className="rounded-2xl border border-primary/20 bg-primary/5 p-6">
-          <h3 className="mb-4 font-semibold">Maliyet özeti</h3>
-          <div className="space-y-2.5 text-sm">
-            {enhanceResult && (
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">fal.ai · clarity-upscaler (iyileştirme)</span>
-                <span className="font-semibold tabular-nums">${enhanceResult.cost_usd.toFixed(3)}</span>
-              </div>
-            )}
-            {stageResult && (
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">
-                  fal.ai · flux/dev img2img (staging · {STYLES.find((s) => s.key === stageResult.style)?.label})
-                </span>
-                <span className="font-semibold tabular-nums">${stageResult.cost_usd.toFixed(3)}</span>
-              </div>
-            )}
-            {videoResult && (
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">kie.ai · img2video (5s video)</span>
-                <span className="font-semibold tabular-nums">${videoResult.cost_usd.toFixed(2)}</span>
-              </div>
-            )}
-            <div className="flex items-center justify-between border-t border-primary/20 pt-3 text-base">
-              <span className="font-semibold">Toplam (bu ilan)</span>
-              <span className="font-bold tabular-nums text-primary">${totalCost.toFixed(3)}</span>
-            </div>
-          </div>
-          <p className="mt-4 text-xs text-muted-foreground">
-            * Tahmini fiyatlar. Gerçek maliyet için{" "}
-            <a href="https://fal.ai/dashboard" target="_blank" rel="noopener noreferrer" className="underline">fal.ai</a>
-            {" "}ve{" "}
-            <a href="https://kieai.erweima.ai" target="_blank" rel="noopener noreferrer" className="underline">kie.ai</a>
-            {" "}panellerini kontrol et.
-          </p>
         </section>
       )}
     </div>

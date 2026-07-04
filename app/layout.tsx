@@ -35,6 +35,21 @@ export const metadata: Metadata = {
   title: `${appConfig.name} — ${appConfig.tagline[DEFAULT_LANG]}`,
   description: appConfig.description[DEFAULT_LANG],
   applicationName: appConfig.name,
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
+  openGraph: {
+    title: appConfig.name,
+    description: appConfig.description[DEFAULT_LANG],
+    siteName: appConfig.name,
+  },
+  twitter: {
+    card: "summary",
+    title: appConfig.name,
+    description: appConfig.description[DEFAULT_LANG],
+  },
 };
 
 export default function RootLayout({

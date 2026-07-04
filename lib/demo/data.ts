@@ -1,5 +1,5 @@
 /**
- * Vista demo data — a real-estate agent's listing studio. With no API keys,
+ * Visuimo demo data — a real-estate agent's listing studio. With no API keys,
  * the studio renders from this file; gradient/SVG scenes stand in for the
  * generated images/videos. Wire fal.ai + Kie.ai (run /setup) for real renders.
  */
@@ -102,11 +102,11 @@ export const inquiries: Inquiry[] = [
 
 export interface DActivity { id: string; who: string; action: L; target: string; at: string; tone: "neutral" | "success" | "warning" | "info"; }
 export const activity: DActivity[] = [
-  { id: "a1", who: "Vista", action: { tr: "tanıtım videosunu render etti:", en: "rendered the tour video for" }, target: "Villa Biarritz", at: "2026-06-13T09:05:00Z", tone: "success" },
+  { id: "a1", who: "Visuimo", action: { tr: "tanıtım videosunu render etti:", en: "rendered the tour video for" }, target: "Villa Biarritz", at: "2026-06-13T09:05:00Z", tone: "success" },
   { id: "a2", who: "Sen", action: { tr: "12 fotoğraf yükledi:", en: "uploaded 12 photos to" }, target: "Studio Nice", at: "2026-06-13T08:30:00Z", tone: "info" },
-  { id: "a3", who: "Vista", action: { tr: "oturma odasını sanal döşedi:", en: "virtually staged the living room of" }, target: "Loft Marais", at: "2026-06-12T18:40:00Z", tone: "neutral" },
+  { id: "a3", who: "Visuimo", action: { tr: "oturma odasını sanal döşedi:", en: "virtually staged the living room of" }, target: "Loft Marais", at: "2026-06-12T18:40:00Z", tone: "neutral" },
   { id: "a4", who: "Sistem", action: { tr: "3 fotoğrafta düşük ışık uyardı:", en: "flagged low light on 3 photos of" }, target: "Maison Lyon", at: "2026-06-12T16:10:00Z", tone: "warning" },
-  { id: "a5", who: "Vista", action: { tr: "sanal turu yayınladı:", en: "published the virtual tour for" }, target: "Appartement Foch", at: "2026-06-12T11:25:00Z", tone: "success" },
+  { id: "a5", who: "Visuimo", action: { tr: "sanal turu yayınladı:", en: "published the virtual tour for" }, target: "Appartement Foch", at: "2026-06-12T11:25:00Z", tone: "success" },
 ];
 
 /** Studio month-to-date numbers for the hero. */
