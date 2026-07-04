@@ -32,10 +32,10 @@ interface VideoResult {
 }
 
 const STYLES = [
-  { key: "scandinavian", label: "İskandinav" },
-  { key: "modern",       label: "Modern Minimal" },
-  { key: "warmwood",     label: "Sıcak Ahşap" },
-  { key: "industrial",   label: "Endüstriyel" },
+  { key: "scandinavian", label: "Scandinave" },
+  { key: "modern",       label: "Minimaliste moderne" },
+  { key: "warmwood",     label: "Bois chaleureux" },
+  { key: "industrial",   label: "Industriel" },
 ] as const;
 
 type StyleKey = (typeof STYLES)[number]["key"];
@@ -85,7 +85,7 @@ function DownloadButton({ url, filename }: { url: string; filename: string }) {
       className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground shadow-sm transition hover:bg-muted disabled:opacity-50"
     >
       {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
-      {busy ? "İndiriliyor…" : "İndir"}
+      {busy ? "Téléchargement…" : "Télécharger"}
     </button>
   );
 }
@@ -137,13 +137,13 @@ function TestPageInner() {
     if (listingId) return listingId;
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error("Oturum açık değil, kaydedilemedi");
-    const address = fileName ? `Yeni ilan · ${fileName}` : `Yeni ilan · ${new Date().toLocaleDateString("tr-TR")}`;
+    if (!user) throw new Error("Session non active, impossible d'enregistrer");
+    const address = fileName ? `Nouvelle annonce · ${fileName}` : `Nouvelle annonce · ${new Date().toLocaleDateString("fr-FR")}`;
     const { data, error } = await supabase.from("listings")
       .insert({ user_id: user.id, address })
       .select("id, address")
       .single();
-    if (error || !data) throw new Error(error?.message ?? "İlan oluşturulamadı");
+    if (error || !data) throw new Error(error?.message ?? "Impossible de créer l'annonce");
     setListingId(data.id);
     setListingAddress(data.address as string);
     router.replace(`/test?listing=${data.id}`);
@@ -180,7 +180,7 @@ function TestPageInner() {
     try {
       return JSON.parse(text);
     } catch {
-      throw new Error(`Sunucu hatası (${res.status}): ${text.slice(0, 200)}`);
+      throw new Error(`Erreur serveur (${res.status}): ${text.slice(0, 200)}`);
     }
   }
 
@@ -195,13 +195,13 @@ function TestPageInner() {
       const submitted = await safeJson(res);
       if (!res.ok) {
         const detail = submitted.detail ? ` → ${typeof submitted.detail === "string" ? submitted.detail : JSON.stringify(submitted.detail)}` : "";
-        throw new Error(((submitted.error as string) ?? "Bilinmeyen hata") + detail);
+        throw new Error(((submitted.error as string) ?? "Erreur inconnue") + detail);
       }
 
       const { status_url, response_url, original_url } = submitted as {
         status_url: string; response_url: string; original_url: string;
       };
-      if (!status_url || !response_url) throw new Error("İyileştirme başlatılamadı: " + JSON.stringify(submitted));
+      if (!status_url || !response_url) throw new Error("Impossible de démarrer l'amélioration : " + JSON.stringify(submitted));
 
       const t0 = Date.now();
       while (true) {
@@ -212,7 +212,7 @@ function TestPageInner() {
         const poll = await safeJson(pollRes);
         if (!pollRes.ok) {
           const detail = poll.detail ? ` → ${typeof poll.detail === "string" ? poll.detail : JSON.stringify(poll.detail)}` : "";
-          throw new Error(((poll.error as string) ?? "Polling hatası") + detail);
+          throw new Error(((poll.error as string) ?? "Erreur de suivi") + detail);
         }
 
         if (poll.status === "completed") {
@@ -230,7 +230,7 @@ function TestPageInner() {
           break;
         }
         if (poll.status === "failed" || poll.status === "error") {
-          throw new Error("İyileştirme işlemi başarısız");
+          throw new Error("Échec de l'amélioration");
         }
       }
     } catch (e: unknown) {
@@ -258,13 +258,13 @@ function TestPageInner() {
       const submitted = await safeJson(res);
       if (!res.ok) {
         const detail = submitted.detail ? ` → ${typeof submitted.detail === "string" ? submitted.detail : JSON.stringify(submitted.detail)}` : "";
-        throw new Error(((submitted.error as string) ?? "Bilinmeyen hata") + detail);
+        throw new Error(((submitted.error as string) ?? "Erreur inconnue") + detail);
       }
 
       const { style } = submitted as { request_id: string; style: string; status_url: string; response_url: string };
       let status_url = submitted.status_url as string;
       let response_url = submitted.response_url as string;
-      if (!status_url || !response_url) throw new Error("Staging başlatılamadı: " + JSON.stringify(submitted));
+      if (!status_url || !response_url) throw new Error("Impossible de démarrer le home staging : " + JSON.stringify(submitted));
 
       let phase: "stage" | "sharpen" = "stage";
       let fallbackUrl: string | undefined;
@@ -278,7 +278,7 @@ function TestPageInner() {
         const poll = await safeJson(pollRes);
         if (!pollRes.ok) {
           const detail = poll.detail ? ` → ${typeof poll.detail === "string" ? poll.detail : JSON.stringify(poll.detail)}` : "";
-          throw new Error(((poll.error as string) ?? "Polling hatası") + detail);
+          throw new Error(((poll.error as string) ?? "Erreur de suivi") + detail);
         }
 
         if (poll.status === "processing" && poll.phase === "sharpen") {
@@ -302,7 +302,7 @@ function TestPageInner() {
           break;
         }
         if (poll.status === "failed" || poll.status === "error") {
-          throw new Error("Staging işlemi başarısız");
+          throw new Error("Échec du home staging");
         }
       }
     } catch (e: unknown) {
@@ -330,19 +330,19 @@ function TestPageInner() {
       if (!res.ok) throw new Error((submitted.error as string) ?? JSON.stringify(submitted.detail ?? submitted));
 
       const { task_id } = submitted as { task_id: string };
-      if (!task_id) throw new Error("Video görevi başlatılamadı: " + JSON.stringify(submitted));
+      if (!task_id) throw new Error("Impossible de démarrer la génération vidéo : " + JSON.stringify(submitted));
 
       const t0 = Date.now();
-      const MAX_WAIT_MS = 10 * 60 * 1000; // Kling render bazen birkaç dakika sürebilir
+      const MAX_WAIT_MS = 10 * 60 * 1000; // Le rendu Kling peut parfois prendre plusieurs minutes
       while (true) {
-        if (Date.now() - t0 > MAX_WAIT_MS) throw new Error("Video üretimi 10 dakikada tamamlanamadı");
+        if (Date.now() - t0 > MAX_WAIT_MS) throw new Error("La génération vidéo n'a pas abouti en 10 minutes");
         await new Promise((r) => setTimeout(r, 5000));
 
         const pollRes = await fetch(`/api/video?task_id=${encodeURIComponent(task_id)}`);
         const poll = await safeJson(pollRes);
         if (!pollRes.ok) {
           const detail = poll.detail ? ` → ${typeof poll.detail === "string" ? poll.detail : JSON.stringify(poll.detail)}` : "";
-          throw new Error(((poll.error as string) ?? "Polling hatası") + detail);
+          throw new Error(((poll.error as string) ?? "Erreur de suivi") + detail);
         }
 
         if (poll.status === "completed") {
@@ -366,23 +366,23 @@ function TestPageInner() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-8">
-      {/* Başlık */}
+      {/* Titre */}
       <div>
-        <h2 className="font-display text-2xl font-semibold tracking-tight">Stüdyo Testi</h2>
+        <h2 className="font-display text-2xl font-semibold tracking-tight">Test du studio</h2>
         <p className="text-sm text-muted-foreground">
-          Fotoğraf yükle, iyileştir, döşe ve tanıtım videosu üret.
+          Téléversez une photo, améliorez-la, meublez-la et générez une vidéo de présentation.
         </p>
         {listingAddress && (
           <p className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-success">
-            <Save className="h-3.5 w-3.5" /> Sonuçlar &ldquo;{listingAddress}&rdquo; ilanına kaydediliyor
+            <Save className="h-3.5 w-3.5" /> Les résultats sont enregistrés dans l&rsquo;annonce &laquo; {listingAddress} &raquo;
           </p>
         )}
-        {saveError && <ErrorBox msg={`Sonuç ilana kaydedilemedi: ${saveError}`} />}
+        {saveError && <ErrorBox msg={`Le résultat n'a pas pu être enregistré dans l'annonce : ${saveError}`} />}
       </div>
 
-      {/* ── Adım 1: Yükle & İyileştir ── */}
+      {/* ── Étape 1 : Téléverser & Améliorer ── */}
       <section className="rounded-2xl border border-border bg-card p-6 shadow-soft">
-        <h3 className="mb-4 font-semibold">1 · Fotoğraf yükle & iyileştir</h3>
+        <h3 className="mb-4 font-semibold">1 · Téléverser et améliorer une photo</h3>
 
         <div
           role="button" tabIndex={0}
@@ -394,11 +394,11 @@ function TestPageInner() {
         >
           {preview ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={preview} alt="Yüklenen fotoğraf" className="max-h-52 rounded-lg object-contain" />
+            <img src={preview} alt="Photo téléversée" className="max-h-52 rounded-lg object-contain" />
           ) : (
             <>
               <Upload className="h-10 w-10 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">Tıkla veya sürükle · JPG, PNG, WEBP</p>
+              <p className="text-sm text-muted-foreground">Cliquez ou glissez-déposez · JPG, PNG, WEBP</p>
             </>
           )}
         </div>
@@ -409,52 +409,52 @@ function TestPageInner() {
             <p className="truncate text-sm text-muted-foreground">{file.name} · {(file.size / 1024).toFixed(0)} KB</p>
             <Button onClick={runEnhance} disabled={enhancing} className="shrink-0 gap-2">
               {enhancing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
-              {enhancing ? "İyileştiriliyor…" : "İyileştir"}
+              {enhancing ? "Amélioration en cours…" : "Améliorer"}
             </Button>
           </div>
         )}
         {enhanceError && <ErrorBox msg={enhanceError} />}
       </section>
 
-      {/* ── Adım 2: İyileştirme sonucu ── */}
+      {/* ── Étape 2 : Résultat de l'amélioration ── */}
       {enhanceResult && (
         <section className="rounded-2xl border border-border bg-card p-6 shadow-soft">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <h3 className="flex items-center gap-2 font-semibold">
               <CheckCircle2 className="h-5 w-5 text-success" />
-              2 · İyileştirme sonucu
+              2 · Résultat de l&rsquo;amélioration
             </h3>
             <StatusBadge label={`${enhanceResult.elapsed_s}s`} />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Orijinal</p>
+              <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Original</p>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={preview!} alt="Orijinal" className="w-full rounded-lg border border-border object-contain" />
+              <img src={preview!} alt="Original" className="w-full rounded-lg border border-border object-contain" />
             </div>
             <div>
               <div className="mb-2 flex items-center justify-between">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">İyileştirilmiş</p>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Amélioré</p>
                 <DownloadButton url={enhanceResult.enhanced_url} filename="enhanced.jpg" />
               </div>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={enhanceResult.enhanced_url} alt="İyileştirilmiş" className="w-full rounded-lg border border-primary/30 object-contain" />
+              <img src={enhanceResult.enhanced_url} alt="Amélioré" className="w-full rounded-lg border border-primary/30 object-contain" />
             </div>
           </div>
         </section>
       )}
 
-      {/* ── Adım 3: Staging ── */}
+      {/* ── Étape 3 : Home staging ── */}
       {enhanceResult && (
         <section className="rounded-2xl border border-border bg-card p-6 shadow-soft">
           <h3 className="mb-4 font-semibold">
             {stageResult ? (
               <span className="flex items-center gap-2">
                 <CheckCircle2 className="h-5 w-5 text-success" />
-                3 · Staging sonucu
+                3 · Résultat du home staging
               </span>
-            ) : "3 · Sanal staging"}
+            ) : "3 · Home staging virtuel"}
           </h3>
 
           {!stageResult && (
@@ -482,39 +482,39 @@ function TestPageInner() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">İyileştirilmiş</p>
+                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Amélioré</p>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={enhanceResult.enhanced_url} alt="İyileştirilmiş" className="w-full rounded-lg border border-border object-contain" />
+                  <img src={enhanceResult.enhanced_url} alt="Amélioré" className="w-full rounded-lg border border-border object-contain" />
                 </div>
                 <div>
                   <div className="mb-2 flex items-center justify-between">
                     <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                      Staged · {STYLES.find((s) => s.key === stageResult.style)?.label}
+                      Meublé · {STYLES.find((s) => s.key === stageResult.style)?.label}
                     </p>
                     <DownloadButton url={stageResult.staged_url} filename={`staged-${stageResult.style}.jpg`} />
                   </div>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={stageResult.staged_url} alt="Staged" className="w-full rounded-lg border border-primary/30 object-contain" />
+                  <img src={stageResult.staged_url} alt="Meublé" className="w-full rounded-lg border border-primary/30 object-contain" />
                 </div>
               </div>
               <button
                 onClick={() => { setStageResult(null); setStageError(null); setVideoResult(null); }}
                 className="mt-3 text-xs text-muted-foreground underline"
               >
-                Farklı stil dene
+                Essayer un autre style
               </button>
             </>
           ) : (
             <Button onClick={runStage} disabled={staging} className="gap-2">
               {staging ? <Loader2 className="h-4 w-4 animate-spin" /> : <Armchair className="h-4 w-4" />}
-              {staging ? "Staging yapılıyor… (~20s)" : `${STYLES.find((s) => s.key === selectedStyle)?.label} staging uygula`}
+              {staging ? "Home staging en cours… (~20 s)" : `Appliquer le home staging ${STYLES.find((s) => s.key === selectedStyle)?.label}`}
             </Button>
           )}
           {stageError && <ErrorBox msg={stageError} />}
         </section>
       )}
 
-      {/* ── Adım 4: Video ── */}
+      {/* ── Étape 4 : Vidéo ── */}
       {(stageResult ?? (enhanceResult && !staging)) && enhanceResult && (
         <section className="rounded-2xl border border-border bg-card p-6 shadow-soft">
           {videoResult ? (
@@ -522,30 +522,30 @@ function TestPageInner() {
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <h3 className="flex items-center gap-2 font-semibold">
                   <CheckCircle2 className="h-5 w-5 text-success" />
-                  4 · Tanıtım videosu
+                  4 · Vidéo de présentation
                 </h3>
                 <StatusBadge label={`${videoResult.elapsed_s}s`} />
               </div>
               <video src={videoResult.video_url} controls autoPlay loop className="w-full rounded-lg border border-border" />
               <div className="mt-3 flex items-center justify-between">
                 <p className="text-xs text-muted-foreground">
-                  {stageResult ? "Staged görsel" : "İyileştirilmiş görsel"} kaynak alındı
+                  {stageResult ? "Visuel meublé" : "Visuel amélioré"} utilisé comme source
                 </p>
-                <DownloadButton url={videoResult.video_url} filename="tanitim-videosu.mp4" />
+                <DownloadButton url={videoResult.video_url} filename="video-presentation.mp4" />
               </div>
             </>
           ) : (
             <>
-              <h3 className="mb-4 font-semibold">4 · Tanıtım videosu üret</h3>
+              <h3 className="mb-4 font-semibold">4 · Générer la vidéo de présentation</h3>
               <p className="mb-4 text-sm text-muted-foreground">
-                {stageResult ? "Staged görsel" : "İyileştirilmiş görsel"} kaynak alınarak 5 saniyelik tanıtım videosu üretilir.
+                En utilisant {stageResult ? "le visuel meublé" : "le visuel amélioré"} comme source, une vidéo de présentation de 5 secondes est générée.
               </p>
               <Button onClick={runVideo} disabled={generating} className="gap-2">
                 {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Clapperboard className="h-4 w-4" />}
-                {generating ? "Video üretiliyor…" : "Tanıtım videosu üret"}
+                {generating ? "Génération de la vidéo…" : "Générer la vidéo de présentation"}
               </Button>
               {generating && (
-                <p className="mt-2 text-xs text-muted-foreground">60 saniye - birkaç dakika sürebilir. Sayfa açık kalsın.</p>
+                <p className="mt-2 text-xs text-muted-foreground">60 secondes à quelques minutes. Gardez la page ouverte.</p>
               )}
             </>
           )}

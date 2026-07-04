@@ -24,133 +24,133 @@ const tryScenes: Record<string, { before: string; after: string }> = {
 };
 
 const content = {
-  tr: {
-    nav: ["Ne yapar", "Fiyatlar"],
-    signin: "Giriş yap", demo: "Ücretsiz dene",
-    badge: "Emlak görsel stüdyosu",
-    h1a: "İlanı çekmek", h1b: "beş dakika.", h1c: "Satması artık daha hızlı.",
-    sub: "Visuimo, telefonla çekilmiş ilan fotoğraflarını alır; ışığı düzeltir, boş odaları sanal mobilyayla döşer ve tanıtım videosu üretir. Stüdyo yok, drone yok — sadece satan görseller.",
-    cta1: "Stüdyoyu aç", cta2: "Nasıl göründüğüne bak", note: "· kart yok · 60 saniyede başla",
-    marqueeTitle: "Visuimo her mekânı tanır",
-    marquee: ["Rezidans", "Villa", "Müstakil", "Loft", "Daire", "Bağ Evi", "Yalı", "Dubleks", "Stüdyo", "Penthouse", "Ofis", "Arsa"],
-    problemKicker: "Kaos",
-    problemH: ["Profesyonel foto pahalı.", "Boş daire satmıyor. Drone izin istiyor."],
-    problemBody: "Bulanık, düşük çözünürlüklü telefon fotoğrafları, boş odalar, bir günlük fotoğrafçı ücreti... İlan portalda kaybolur, alıcı kaydırıp geçer. Visuimo bütün bu işi tek panele ve birkaç dakikaya indirir.",
+  fr: {
+    nav: ["Ce que ça fait", "Tarifs"],
+    signin: "Connexion", demo: "Essayer gratuitement",
+    badge: "Studio visuel immobilier",
+    h1a: "Photographier un bien", h1b: "en cinq minutes.", h1c: "Le vendre, bien plus vite.",
+    sub: "Visuimo prend les photos d'annonce prises au téléphone ; corrige la lumière, meuble virtuellement les pièces vides et génère une vidéo de présentation. Pas de studio, pas de drone — juste des visuels qui vendent.",
+    cta1: "Ouvrir le studio", cta2: "Voir à quoi ça ressemble", note: "· sans carte · commencez en 60 secondes",
+    marqueeTitle: "Visuimo connaît tous les types de biens",
+    marquee: ["Résidence", "Villa", "Maison individuelle", "Loft", "Appartement", "Maison de campagne", "Bord de mer", "Duplex", "Studio", "Penthouse", "Bureau", "Terrain"],
+    problemKicker: "Le chaos",
+    problemH: ["Les photos pro coûtent cher.", "Un logement vide ne se vend pas. Le drone demande une autorisation."],
+    problemBody: "Photos de téléphone floues et basse résolution, pièces vides, tarif journalier d'un photographe... l'annonce se perd sur le portail et l'acheteur passe son chemin. Visuimo condense tout ce travail en un seul panneau et quelques minutes.",
     problemStats: [
-      { n: "€500", l: "tek ilan için fotoğrafçı + drone" },
-      { n: "3 gün", l: "çekim + kurgu bekleme süresi" },
-      { n: "%60", l: "boş daireyi hayal edemeyen alıcı" },
-      { n: "11", l: "düzenlenmeyi bekleyen ham fotoğraf" },
+      { n: "€500", l: "photographe + drone pour une annonce" },
+      { n: "3 jours", l: "délai de prise de vue + montage" },
+      { n: "60 %", l: "d'acheteurs n'arrivent pas à se projeter dans un logement vide" },
+      { n: "11", l: "photos brutes en attente de retouche" },
     ],
-    whatKicker: "Ne yapar",
-    whatH: ["Bir ilan ekibi kadar iş,", "tek panelde, sessizce."],
+    whatKicker: "Ce que ça fait",
+    whatH: ["Le travail d'une équipe d'annonce,", "dans un seul panneau, en toute discrétion."],
     modules: [
-      { t: "Foto iyileştirme", b: "Bulanık, düşük çözünürlüklü fotoğraflar tek tıkta net, yüksek çözünürlüklü profesyonel ilan görseline döner.", soon: false },
-      { t: "Sanal staging", b: "Boş daireyi saniyeler içinde döşe — alıcı evi hayal etmesin, görsün. İstediğin stilde mobilya.", soon: false },
-      { t: "Tanıtım videosu", b: "Fotoğraflardan akıcı, müzikli bir tanıtım videosu render edilir; Reels ve portala hazır iner.", soon: false },
-      { t: "Sanal tur", b: "Oda oda gezilebilen bir tur linki. Yakında geliyor.", soon: true },
-      { t: "Portföy paneli", b: "Tüm ilanların tek yerde; hangisi hangi aşamada, hangi görsel hazır — bir bakışta.", soon: false },
-      { t: "Marka filigranı", b: "Her görsele ve videoya ofis logon ve iletişimin otomatik, zarif şekilde işlenir.", soon: false },
+      { t: "Amélioration photo", b: "Des photos floues et basse résolution deviennent des visuels d'annonce professionnels, nets et haute résolution, en un clic.", soon: false },
+      { t: "Home staging virtuel", b: "Meublez un appartement vide en quelques secondes — pour que l'acheteur voie le logement, pas seulement l'imagine. Le mobilier dans le style de votre choix.", soon: false },
+      { t: "Vidéo de présentation", b: "Une vidéo de présentation fluide et musicale est générée à partir des photos ; prête pour Reels et le portail.", soon: false },
+      { t: "Visite virtuelle", b: "Un lien de visite pièce par pièce. Bientôt disponible.", soon: true },
+      { t: "Tableau de bord portefeuille", b: "Toutes vos annonces au même endroit ; quelle annonce en est où, quel visuel est prêt — en un coup d'œil.", soon: false },
+      { t: "Filigrane de marque", b: "Le logo et les coordonnées de votre agence sont appliqués automatiquement et élégamment à chaque visuel et vidéo.", soon: false },
     ],
-    promiseKicker: "Dürüst söz",
-    promiseH: ["Mekânı güzelleştiririz.", "Gerçeği değil."],
-    promiseBody: "Visuimo boş odaya mobilya ekler, ışığı dengeler — ama duvarı kaldırmaz, çatlağı kapatmaz, m²'yi büyütmez. Sanal staging görselleri otomatik etiketlenebilir. Görsel güzel olsun diye alıcıyı yanıltmıyoruz.",
+    promiseKicker: "Promesse honnête",
+    promiseH: ["Nous embellissons le bien.", "Jamais la vérité."],
+    promiseBody: "Visuimo ajoute du mobilier à une pièce vide et équilibre la lumière — mais ne supprime pas un mur, ne cache pas une fissure, n'agrandit pas les m². Les visuels de home staging virtuel peuvent être étiquetés automatiquement. Nous ne trompons jamais un acheteur pour un plus beau visuel.",
     promiseBullets: [
-      "Yapısal değişiklik yok: duvar, pencere, m² olduğu gibi kalır.",
-      "Sanal staging görsellerine otomatik 'sanal olarak döşenmiştir' etiketi.",
-      "Orijinal fotoğraflar her zaman saklanır, indirilebilir.",
-      "Filigran ve telif senin; üretilen her şey sana ait.",
+      "Aucun changement structurel : murs, fenêtres et m² restent tels quels.",
+      "Mention automatique « meublé virtuellement » sur les visuels de home staging virtuel.",
+      "Les photos originales sont toujours conservées et téléchargeables.",
+      "Le filigrane et les droits sont à vous ; tout ce qui est généré vous appartient.",
     ],
-    pricingKicker: "Fiyatlar",
-    pricingH: ["Tek stüdyo.", "Dürüst fiyat."],
-    creditNote: "1 iyileştirme = 1 kredi · 1 staging = 2 kredi · 1 video = 9 kredi",
+    pricingKicker: "Tarifs",
+    pricingH: ["Un seul studio.", "Un prix honnête."],
+    creditNote: "1 amélioration = 1 crédit · 1 home staging = 2 crédits · 1 vidéo = 9 crédits",
     plans: [
       {
-        name: "Solo", price: "€0", cad: "başlangıç",
-        body: "Bireysel danışman için, denemek isteyenler.",
-        credits: "20 kredi / ay",
-        bullets: ["Foto iyileştirme", "Sanal staging", "Tanıtım videosu", "Portföy paneli"],
-        cta: "Ücretsiz başla", featured: false,
+        name: "Solo", price: "€0", cad: "pour commencer",
+        body: "Pour un agent indépendant qui veut essayer.",
+        credits: "20 crédits / mois",
+        bullets: ["Amélioration photo", "Home staging virtuel", "Vidéo de présentation", "Tableau de bord portefeuille"],
+        cta: "Commencer gratuitement", featured: false,
       },
       {
-        name: "Pro", price: "€29", cad: "/ay",
-        body: "Aktif çalışan emlakçı için tam stüdyo deneyimi.",
-        credits: "180 kredi / ay",
-        bullets: ["Foto iyileştirme", "Sanal staging", "Tanıtım videosu", "Portföy paneli", "Öncelikli render"],
-        cta: "Pro'ya geç", featured: true,
+        name: "Pro", price: "€29", cad: "/mois",
+        body: "L'expérience studio complète pour un agent actif.",
+        credits: "180 crédits / mois",
+        bullets: ["Amélioration photo", "Home staging virtuel", "Vidéo de présentation", "Tableau de bord portefeuille", "Rendu prioritaire"],
+        cta: "Passer à Pro", featured: true,
       },
       {
-        name: "Acente", price: "€69", cad: "/ay",
-        body: "Ofis ekibi: paylaşılan portföy ve marka.",
-        credits: "450 kredi / ay",
-        bullets: ["Pro'daki her şey", "Ekip & roller (yakında)", "Marka kütüphanesi (yakında)", "API erişimi (yakında)"],
-        cta: "Acente'ye geç", featured: false,
+        name: "Agence", price: "€69", cad: "/mois",
+        body: "Équipe d'agence : portefeuille et marque partagés.",
+        credits: "450 crédits / mois",
+        bullets: ["Tout ce qui est dans Pro", "Équipe & rôles (bientôt)", "Bibliothèque de marque (bientôt)", "Accès API (bientôt)"],
+        cta: "Passer à Agence", featured: false,
       },
     ],
-    faqKicker: "Merak edilenler",
-    faqH: "Kısa cevaplar.",
+    faqKicker: "Questions fréquentes",
+    faqH: "Des réponses courtes.",
     faq: [
-      { q: "Deneme için ücret ödüyor muyum?", a: "Hayır. Solo plan tamamen ücretsiz ve ayda 20 kredi içerir. Kredi bitince Pro veya Acente planına geçebilirsin." },
-      { q: "Üretilen görseller gerçekçi mi?", a: "Evet. Foto iyileştirme gerçek fotoğrafın üstünde çalışır; sanal staging boş odaya mobilya ekler. Mekânın yapısını değiştirmez." },
-      { q: "Hangi formatlar çıkıyor?", a: "İyileştirilmiş JPG'ler ve tanıtım videosu (MP4). Her birini doğrudan indirip istediğin portala kendin yükleyebilirsin." },
-      { q: "Görselleri portallara nasıl yüklerim?", a: "Visuimo çıktılarını indirir, sonra istediğin portala (SeLoger, Leboncoin, PAP vb.) kendin yüklersin. Otomatik portal entegrasyonu şu an mevcut değil." },
-      { q: "Orijinal fotoğraflarım saklanıyor mu?", a: "Evet. Her ilanın ham fotoğrafları olduğu gibi tutulur ve her an indirilebilir. Visuimo hiçbir orijinali silmez." },
-      { q: "Ekip olarak kullanabilir miyiz?", a: "Acente planında paylaşılan portföy, roller ve ortak marka kütüphanesi geliyor — şu an geliştirme aşamasında." },
-      { q: "Tanıtım videosu gerçek drone mu?", a: "Hayır — fotoğraflarından akıcı, müzikli bir kamera hareketi sentezlenir. İzin gerekmez, hava şartı beklenmez." },
-      { q: "Aboneliği istediğimde iptal edebilir miyim?", a: "Evet. Aylık plan, tek tıkla iptal; üretilmiş tüm görsel ve videolar senin kalır." },
+      { q: "Dois-je payer pour essayer ?", a: "Non. Le plan Solo est entièrement gratuit et inclut 20 crédits par mois. Une fois les crédits épuisés, vous pouvez passer au plan Pro ou Agence." },
+      { q: "Les images générées sont-elles réalistes ?", a: "Oui. L'amélioration photo travaille sur la photo réelle ; le home staging virtuel ajoute du mobilier à une pièce vide. Il ne modifie pas la structure du bien." },
+      { q: "Quels formats sont produits ?", a: "Des JPG améliorés et une vidéo de présentation (MP4). Vous pouvez les télécharger directement et les publier sur le portail de votre choix." },
+      { q: "Comment mettre les visuels sur les portails ?", a: "Visuimo produit des fichiers téléchargeables. Vous les publiez ensuite vous-même sur votre portail (SeLoger, Leboncoin, PAP, etc.). L'intégration automatique aux portails n'est pas encore disponible." },
+      { q: "Mes photos originales sont-elles conservées ?", a: "Oui. Les photos brutes de chaque annonce sont conservées telles quelles et téléchargeables à tout moment. Visuimo ne supprime jamais un original." },
+      { q: "Peut-on l'utiliser en équipe ?", a: "Le plan Agence ajoutera portefeuille partagé, rôles et bibliothèque de marque commune — actuellement en développement." },
+      { q: "La vidéo de présentation est-elle un vrai drone ?", a: "Non — un mouvement de caméra fluide et musical est synthétisé à partir de vos photos. Aucune autorisation nécessaire, aucune attente météo." },
+      { q: "Puis-je annuler mon abonnement à tout moment ?", a: "Oui. Le plan mensuel s'annule en un clic ; toutes les images et vidéos générées vous appartiennent." },
     ],
-    tryKicker: "Canlı dene",
-    tryH: ["Görseli dönüştür.", "Tek tıkla."],
-    tryBody: "Bir stil seç — Visuimo'nın aynı mekânı nasıl değiştirdiğini gör. Bu gerçek bir önizleme: tıkla, sahne anında değişsin.",
+    tryKicker: "Essayer en direct",
+    tryH: ["Transformez un visuel.", "En un clic."],
+    tryBody: "Choisissez un style — voyez comment Visuimo transforme le même espace. C'est un véritable aperçu : cliquez, la scène change instantanément.",
     tryStyles: [
-      { id: "stage",   label: "Boş oda → Sanal staging",  caption: "Boş oturma odası saniyeler içinde İskandinav mobilyayla döşendi. 'Sanal olarak döşenmiştir' etiketi eklendi.", chip: "Sanal staging" },
-      { id: "enhance", label: "Ham foto → Geliştirme",     caption: "Bulanık, düşük çözünürlüklü telefon fotoğrafı net, yüksek çözünürlüklü ilan görseline döndü.", chip: "İyileştirme" },
+      { id: "stage",   label: "Pièce vide → Home staging virtuel",  caption: "Le salon vide a été meublé en style scandinave en quelques secondes. Une mention « meublé virtuellement » a été ajoutée.", chip: "Home staging virtuel" },
+      { id: "enhance", label: "Photo brute → Amélioration",     caption: "Une photo de téléphone floue et basse résolution est devenue un visuel d'annonce net et haute résolution.", chip: "Amélioration" },
     ],
-    tryBefore: "Önce", tryAfter: "Sonra · Visuimo",
-    usesKicker: "Kimler kullanıyor",
-    usesH: ["Bir ilanı satan", "herkes için."],
+    tryBefore: "Avant", tryAfter: "Après · Visuimo",
+    usesKicker: "Qui l'utilise",
+    usesH: ["Pour tous ceux qui", "vendent un bien."],
     uses: [
-      { t: "Emlak danışmanı",   b: "Her ilanı aynı gün portala hazır görsellerle yayınla; fotoğrafçı beklemeden daha fazla ilan çek.", stat: "" },
-      { t: "Mimar & iç mimar", b: "Konsept odaları ve boş projeleri saniyeler içinde döşenmiş, sunulabilir görsellere çevir.", stat: "Sunuma dakikalar içinde hazır" },
-      { t: "Airbnb ev sahibi", b: "Dağınık telefon fotoğrafları parlak, davetkar ilan görsellerine dönsün.", stat: "" },
-      { t: "Portföy yöneticisi", b: "Onlarca ilanı tek panelden görselleştir ve takip et — tutarlı marka, sıfır kaos.", stat: "Tüm portföy tek panelde" },
+      { t: "Agent immobilier",   b: "Publiez chaque annonce le jour même avec des visuels prêts pour les portails ; prenez plus de mandats sans attendre un photographe.", stat: "" },
+      { t: "Architecte & décorateur", b: "Transformez des pièces concept et des projets vides en visuels meublés et présentables en quelques secondes.", stat: "Prêt à présenter en quelques minutes" },
+      { t: "Hôte Airbnb", b: "Transformez des photos de téléphone en désordre en visuels d'annonce lumineux et accueillants.", stat: "" },
+      { t: "Gestionnaire de portefeuille", b: "Visualisez et suivez des dizaines d'annonces depuis un seul panneau — une marque cohérente, zéro chaos.", stat: "Tout le portefeuille dans un seul panneau" },
     ],
-    compKicker: "Karşılaştır",
-    compH: ["Aynı sonuç.", "Onda biri zamanda."],
-    compCols: ["Profesyonel fotoğrafçı", "Photoshop ekibi", "Visuimo"],
+    compKicker: "Comparer",
+    compH: ["Même résultat.", "En un dixième du temps."],
+    compCols: ["Photographe professionnel", "Équipe Photoshop", "Visuimo"],
     compRows: [
-      { f: "İlan başına maliyet", a: "€500+", b: "€200+", c: "Abonelikte dahil" },
-      { f: "Teslim süresi", a: "2–3 gün", b: "1–2 gün", c: "~5 dakika" },
-      { f: "Sanal sahneleme", a: false, b: true, c: true },
-      { f: "Tanıtım videosu", a: "Ayrı ekip + izin", b: false, c: true },
-      { f: "İndirilebilir hazır format", a: false, b: true, c: true },
-      { f: "Marka filigranı (otomatik)", a: false, b: true, c: true },
-      { f: "Sınırsız revizyon", a: false, b: "Saat ücretli", c: true },
+      { f: "Coût par annonce", a: "€500+", b: "€200+", c: "Inclus dans l'abonnement" },
+      { f: "Délai de livraison", a: "2–3 jours", b: "1–2 jours", c: "~5 minutes" },
+      { f: "Home staging virtuel", a: false, b: true, c: true },
+      { f: "Vidéo de présentation", a: "Équipe séparée + autorisation", b: false, c: true },
+      { f: "Format prêt à télécharger", a: false, b: true, c: true },
+      { f: "Filigrane de marque (auto)", a: false, b: true, c: true },
+      { f: "Révisions illimitées", a: false, b: "Facturé à l'heure", c: true },
     ],
-    outKicker: "Visuimo ne üretir",
-    outH: ["Bir ilan ekibinin", "tüm çıktıları."],
+    outKicker: "Ce que produit Visuimo",
+    outH: ["Tous les livrables", "d'une équipe d'annonce."],
     outputs: [
-      { t: "Foto iyileştirme",  b: "Net, yüksek çözünürlük",    img: "/images/gallery/bedroom-4-enhanced.jpg", soon: false },
-      { t: "Sanal staging",     b: "Boş oda → döşeli",           img: "/images/gallery/bedroom-2-staged.jpg",   soon: false },
-      { t: "Tanıtım videosu",   b: "Akıcı, müzikli tur",         img: "/images/gallery/living-2-staged.jpg",    soon: false },
-      { t: "Portföy paneli",    b: "Tüm ilanlar tek yerde",      img: "/images/gallery/bedroom-3-staged.jpg",   soon: false },
-      { t: "Marka filigranı",   b: "Her görsele otomatik",       img: "/images/gallery/kitchen-2-staged.jpg",   soon: false },
-      { t: "Sanal tur",         b: "Yakında geliyor",            img: "/images/gallery/kitchen-1-staged.jpg",   soon: true  },
+      { t: "Amélioration photo",  b: "Net et haute résolution",    img: "/images/gallery/bedroom-4-enhanced.jpg", soon: false },
+      { t: "Home staging virtuel",     b: "Pièce vide → meublée",           img: "/images/gallery/bedroom-2-staged.jpg",   soon: false },
+      { t: "Vidéo de présentation",   b: "Visite fluide et musicale",         img: "/images/gallery/living-2-staged.jpg",    soon: false },
+      { t: "Tableau de bord portefeuille",    b: "Toutes les annonces au même endroit",      img: "/images/gallery/bedroom-3-staged.jpg",   soon: false },
+      { t: "Filigrane de marque",   b: "Appliqué automatiquement à chaque visuel",       img: "/images/gallery/kitchen-2-staged.jpg",   soon: false },
+      { t: "Visite virtuelle",         b: "Bientôt disponible",            img: "/images/gallery/kitchen-1-staged.jpg",   soon: true  },
     ],
-    flowKicker: "Akış",
-    flowH: ["Yükle. Bekle.", "İndir."],
+    flowKicker: "Le déroulement",
+    flowH: ["Téléversez. Patientez.", "Téléchargez."],
     flow: [
-      { t: "Yükle",           b: "Telefonla çektiğin ham fotoğrafları sürükle bırak. 1 ya da 40 — fark etmez." },
-      { t: "Visuimo çalışır", b: "Işık, perspektif ve renk düzelir; boş odalar döşenir, video render edilir." },
-      { t: "İncele",          b: "Her görseli onayla, stili değiştir, orijinali sakla. Kontrol tamamen sende." },
-      { t: "İndir",           b: "Görselleri ve videoyu doğru formatta indir, istediğin portala kendin yükle." },
+      { t: "Téléverser",           b: "Glissez-déposez les photos brutes prises au téléphone. 1 ou 40 — peu importe." },
+      { t: "Visuimo travaille", b: "La lumière, la perspective et les couleurs sont corrigées ; les pièces vides sont meublées, la vidéo est générée." },
+      { t: "Vérifier",          b: "Validez chaque visuel, changez de style, conservez l'original. Vous gardez le contrôle total." },
+      { t: "Télécharger",           b: "Téléchargez les visuels et la vidéo dans le bon format, puis publiez-les sur le portail de votre choix." },
     ],
-    finaleKicker: "Dene · 60 saniye",
-    finaleH: ["Bir sonraki ilanı", "beş dakikada görselleştir."],
-    finaleBody: "Stüdyoyu aç, ilanını yükle — her adım tıklanabilir. Kart gerekmez, kayıt ücretsiz.",
-    footTagline: "Her ilanı satışa hazır hale getiren emlak görsel stüdyosu.",
-    footProduct: "Ürün", footCompany: "Şirket", footResources: "Kaynaklar", footLegal: "Yasal",
-    footMadeIn: "Toulouse'da tasarlandı",
+    finaleKicker: "Essayez · 60 secondes",
+    finaleH: ["Visualisez votre prochaine annonce", "en cinq minutes."],
+    finaleBody: "Ouvrez le studio, téléversez votre annonce — chaque étape est interactive. Aucune carte requise, l'inscription est gratuite.",
+    footTagline: "Le studio visuel immobilier qui rend chaque annonce prête à vendre.",
+    footProduct: "Produit", footCompany: "Entreprise", footResources: "Ressources", footLegal: "Mentions légales",
+    footMadeIn: "Conçu à Toulouse",
   },
   en: {
     nav: ["What it does", "Pricing"],
@@ -283,10 +283,10 @@ const content = {
 };
 
 /* ── Hero illustration ───────────────────────────────────────────────────── */
-function ListingStack({ lang }: { lang: "tr" | "en" }) {
+function ListingStack({ lang }: { lang: "fr" | "en" }) {
   const [after, setAfter] = useState(true);
   const t = {
-    tr: { staging: "Sanal staging", before: "Önce", after: "Sonra", tour: "Tur hazır", rendering: "Video render", enhanced: "İyileştirildi" },
+    fr: { staging: "Home staging virtuel", before: "Avant", after: "Après", tour: "Visite prête", rendering: "Rendu vidéo", enhanced: "Amélioré" },
     en: { staging: "Virtual staging", before: "Before", after: "After", tour: "Tour ready", rendering: "Rendering video", enhanced: "Enhanced" },
   }[lang];
   return (
@@ -302,7 +302,7 @@ function ListingStack({ lang }: { lang: "tr" | "en" }) {
       {/* mid card */}
       <div className="absolute left-0 top-28 w-[250px] -rotate-3 overflow-hidden rounded-2xl bg-card shadow-pop ring-1 ring-border floaty">
         <div className="relative">
-          <NextImage src={after ? "/images/gallery/bedroom-1-staged.jpg" : "/images/gallery/bedroom-1-enhanced.jpg"} alt={after ? "Sonra" : "Önce"} width={500} height={281} className="aspect-video w-full object-cover" priority />
+          <NextImage src={after ? "/images/gallery/bedroom-1-staged.jpg" : "/images/gallery/bedroom-1-enhanced.jpg"} alt={after ? t.after : t.before} width={500} height={281} className="aspect-video w-full object-cover" priority />
           <button onClick={() => setAfter((v) => !v)} className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-medium text-foreground shadow transition hover:scale-105">
             <ArrowLeftRight className="h-2.5 w-2.5" /> {after ? t.after : t.before}
           </button>
@@ -343,7 +343,7 @@ function ListingStack({ lang }: { lang: "tr" | "en" }) {
 }
 
 /* ── Interactive demo ────────────────────────────────────────────────────── */
-function TransformDemo({ c }: { c: (typeof content)["tr"] }) {
+function TransformDemo({ c }: { c: (typeof content)["fr"] }) {
   const [styleIdx, setStyleIdx] = useState(0);
   const [after, setAfter] = useState(true);
   const active = c.tryStyles[styleIdx];
@@ -376,7 +376,7 @@ function TransformDemo({ c }: { c: (typeof content)["tr"] }) {
       </div>
       <div className="rounded-[2rem] bg-card p-3 shadow-pop ring-1 ring-border">
         <div className="relative aspect-[16/10] overflow-hidden rounded-[1.5rem] ring-1 ring-border">
-          <NextImage src={shown} alt={after ? "Sonra" : "Önce"} fill className="object-cover transition-all duration-500" sizes="(max-width: 768px) 90vw, 750px" />
+          <NextImage src={shown} alt={after ? c.tryAfter : c.tryBefore} fill className="object-cover transition-all duration-500" sizes="(max-width: 768px) 90vw, 750px" />
           <button
             onClick={() => setAfter((v) => !v)}
             className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-[12px] font-medium text-foreground shadow-pop backdrop-blur transition hover:scale-105"
@@ -499,7 +499,7 @@ export default function VisuimoLanding() {
                     <span className="grid h-11 w-11 place-items-center rounded-full bg-primary/10 text-primary transition group-hover:scale-110"><Icon className="h-5 w-5" /></span>
                     {mod.soon && (
                       <span className="rounded-full bg-muted px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-widest text-muted-foreground ring-1 ring-border">
-                        {lang === "tr" ? "Yakında" : "Soon"}
+                        {lang === "fr" ? "Bientôt" : "Soon"}
                       </span>
                     )}
                   </div>
@@ -576,7 +576,7 @@ export default function VisuimoLanding() {
                     {o.soon && (
                       <div className="absolute inset-0 flex items-center justify-center">
                         <span className="rounded-full bg-foreground/80 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-widest text-background backdrop-blur">
-                          {lang === "tr" ? "Yakında" : "Soon"}
+                          {lang === "fr" ? "Bientôt" : "Soon"}
                         </span>
                       </div>
                     )}
@@ -694,7 +694,7 @@ export default function VisuimoLanding() {
           <div className="grid gap-4 md:grid-cols-3">
             {c.plans.map((p) => (
               <article key={p.name} className={cn("relative rounded-3xl p-7 lg:p-8", p.featured ? "bg-sidebar text-sidebar-foreground shadow-pop" : "bg-card ring-1 ring-border shadow-soft")}>
-                {p.featured && <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary-foreground">{lang === "tr" ? "Önerilen" : "Recommended"}</span>}
+                {p.featured && <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary-foreground">{lang === "fr" ? "Recommandé" : "Recommended"}</span>}
                 <p className={cn("label-mono", p.featured ? "text-sidebar-muted" : "text-muted-foreground")}>{p.name}</p>
                 <p className="mt-3 flex items-end gap-1"><span className="font-display text-5xl font-semibold leading-none tracking-tight">{p.price}</span><span className={cn("pb-1.5 text-[13px]", p.featured ? "text-sidebar-muted" : "text-muted-foreground")}>{p.cad}</span></p>
                 <p className="mt-2 text-[12px] font-semibold text-primary">{p.credits}</p>
@@ -763,17 +763,17 @@ export default function VisuimoLanding() {
           <div>
             <p className="label-mono mb-3 text-muted-foreground">{c.footLegal}</p>
             <ul className="space-y-1.5">
-              <li><Link href="/gizlilik" className="hover:text-foreground">{lang === "tr" ? "Gizlilik" : "Privacy"}</Link></li>
-              <li><Link href="/kullanim-kosullari" className="hover:text-foreground">{lang === "tr" ? "Kullanım koşulları" : "Terms"}</Link></li>
-              <li><Link href="/sanal-staging-etigi" className="hover:text-foreground">{lang === "tr" ? "Sanal staging etiği" : "Virtual-staging ethics"}</Link></li>
+              <li><Link href="/gizlilik" className="hover:text-foreground">{lang === "fr" ? "Confidentialité" : "Privacy"}</Link></li>
+              <li><Link href="/kullanim-kosullari" className="hover:text-foreground">{lang === "fr" ? "Conditions d'utilisation" : "Terms"}</Link></li>
+              <li><Link href="/sanal-staging-etigi" className="hover:text-foreground">{lang === "fr" ? "Éthique du home staging virtuel" : "Virtual-staging ethics"}</Link></li>
               <li><Link href="/rgpd" className="hover:text-foreground">RGPD</Link></li>
             </ul>
           </div>
           <div>
             <p className="label-mono mb-3 text-muted-foreground">{c.footCompany}</p>
             <ul className="space-y-1.5">
-              <li><a href="mailto:contact@visuimo.fr" className="hover:text-foreground">contact@visuimo.fr</a></li>
-              <li>{lang === "tr" ? "Toulouse, Fransa" : "Toulouse, France"}</li>
+              <li><a href="mailto:davutsenol.fr@gmail.com" className="hover:text-foreground">davutsenol.fr@gmail.com</a></li>
+              <li>{lang === "fr" ? "Toulouse, France" : "Toulouse, France"}</li>
             </ul>
           </div>
         </div>

@@ -42,7 +42,7 @@ export function Sidebar() {
       </div>
 
       <nav className="flex-1 space-y-1 px-3 py-4">
-        <p className="label-mono px-3 pb-2 pt-1 text-sidebar-muted">{ui.account === "Hesap" ? "Menü" : "Menu"}</p>
+        <p className="label-mono px-3 pb-2 pt-1 text-sidebar-muted">Menu</p>
         {appConfig.nav.map((item) => {
           const active = pathname === item.href || pathname.startsWith(item.href + "/");
           return (

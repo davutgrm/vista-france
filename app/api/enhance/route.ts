@@ -21,13 +21,13 @@ function getKey() {
 
 export async function POST(req: NextRequest) {
   const user = await getAuthUser();
-  if (!user) return NextResponse.json({ error: "Giriş yapmanız gerekiyor" }, { status: 401 });
+  if (!user) return NextResponse.json({ error: "Vous devez être connecté" }, { status: 401 });
 
   const credit = await deductCredits(user.id, CREDIT_COST);
-  if (!credit.ok) return NextResponse.json({ error: "Krediniz yetersiz, planınızı yükseltin" }, { status: 402 });
+  if (!credit.ok) return NextResponse.json({ error: "Crédits insuffisants, veuillez mettre à niveau votre forfait" }, { status: 402 });
 
   const key = getKey();
-  if (!key) return err("FAL_KEY ayarlanmamış. https://fal.ai/dashboard/keys adresinden al.", undefined, 500);
+  if (!key) return err("FAL_KEY non configurée. Obtenez-en une sur https://fal.ai/dashboard/keys.", undefined, 500);
 
   fal.config({ credentials: key });
 
@@ -36,16 +36,16 @@ export async function POST(req: NextRequest) {
     const form = await req.formData();
     file = form.get("file") as File | null;
   } catch (e) {
-    return err("FormData okunamadı", String(e), 400);
+    return err("Impossible de lire le FormData", String(e), 400);
   }
 
-  if (!file) return err("file alanı eksik", undefined, 400);
+  if (!file) return err("Le champ file est manquant", undefined, 400);
 
   let imageUrl: string;
   try {
     imageUrl = await fal.storage.upload(file);
   } catch (e) {
-    return err("fal.ai storage bağlantı hatası", String(e));
+    return err("Erreur de connexion au stockage fal.ai", String(e));
   }
 
   try {
@@ -62,32 +62,32 @@ export async function POST(req: NextRequest) {
     const text = await submitRes.text();
     let submitJson: Record<string, unknown>;
     try { submitJson = JSON.parse(text); }
-    catch { return err("fal.ai submit JSON parse hatası", { status: submitRes.status, body: text.slice(0, 300) }); }
+    catch { return err("Erreur de parsing JSON lors de l'envoi à fal.ai", { status: submitRes.status, body: text.slice(0, 300) }); }
 
-    if (!submitRes.ok) return err("fal.ai submit başarısız", { httpStatus: submitRes.status, body: submitJson });
+    if (!submitRes.ok) return err("Échec de l'envoi à fal.ai", { httpStatus: submitRes.status, body: submitJson });
 
     const status_url = submitJson.status_url as string | undefined;
     const response_url = submitJson.response_url as string | undefined;
     const request_id = (submitJson.request_id ?? submitJson.requestId) as string | undefined;
 
     if (!status_url || !response_url) {
-      return err("fal.ai URL'leri dönmedi", { request_id, status_url, response_url, keys: Object.keys(submitJson) });
+      return err("fal.ai n'a pas renvoyé les URLs", { request_id, status_url, response_url, keys: Object.keys(submitJson) });
     }
 
     return NextResponse.json({ request_id, status_url, response_url, original_url: imageUrl, status: "queued" });
-  } catch (e) { return err("fal.ai kuyruğa gönderilemedi", String(e)); }
+  } catch (e) { return err("Impossible d'envoyer à la file fal.ai", String(e)); }
 }
 
 export async function GET(req: NextRequest) {
   const key = getKey();
-  if (!key) return err("FAL_KEY ayarlanmamış", undefined, 500);
+  if (!key) return err("FAL_KEY non configurée", undefined, 500);
 
   const params = new URL(req.url).searchParams;
   const status_url = params.get("status_url");
   const response_url = params.get("response_url");
   const original_url = params.get("original_url");
 
-  if (!status_url || !response_url) return err("status_url / response_url gerekli", undefined, 400);
+  if (!status_url || !response_url) return err("status_url / response_url requis", undefined, 400);
 
   try {
     const statusRes = await fetch(status_url, { headers: { "Authorization": `Key ${key}` } });
@@ -95,9 +95,9 @@ export async function GET(req: NextRequest) {
 
     let statusJson: Record<string, unknown>;
     try { statusJson = JSON.parse(text); }
-    catch { return err("fal.ai status JSON parse hatası", { httpStatus: statusRes.status, body: text.slice(0, 300) }); }
+    catch { return err("Erreur de parsing JSON du statut fal.ai", { httpStatus: statusRes.status, body: text.slice(0, 300) }); }
 
-    if (!statusRes.ok) return err("fal.ai durum sorgusu başarısız", { httpStatus: statusRes.status, body: statusJson });
+    if (!statusRes.ok) return err("Échec de la requête de statut fal.ai", { httpStatus: statusRes.status, body: statusJson });
 
     const st = ((statusJson.status ?? "unknown") as string).toUpperCase();
 
@@ -107,12 +107,12 @@ export async function GET(req: NextRequest) {
 
       let resultJson: Record<string, unknown>;
       try { resultJson = JSON.parse(resultText); }
-      catch { return err("fal.ai result JSON parse hatası", resultText.slice(0, 300), 502); }
+      catch { return err("Erreur de parsing JSON du résultat fal.ai", resultText.slice(0, 300), 502); }
 
       const imgObj = (resultJson.image ?? (resultJson.images as Array<{ url: string }> | undefined)?.[0]) as
         { url?: string; width?: number; height?: number } | undefined;
       const enhancedUrl = imgObj?.url ?? null;
-      if (!enhancedUrl) return err("fal.ai görsel URL döndürmedi", resultJson, 502);
+      if (!enhancedUrl) return err("fal.ai n'a pas renvoyé d'URL d'image", resultJson, 502);
 
       return NextResponse.json({
         status: "completed",
@@ -125,8 +125,8 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    if (st === "FAILED") return err("fal.ai işlem başarısız", statusJson, 502);
+    if (st === "FAILED") return err("Échec du traitement fal.ai", statusJson, 502);
 
     return NextResponse.json({ status: st.toLowerCase() });
-  } catch (e) { return err("Durum sorgulanamadı", String(e)); }
+  } catch (e) { return err("Impossible d'interroger le statut", String(e)); }
 }

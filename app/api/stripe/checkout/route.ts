@@ -11,7 +11,7 @@ const PLANS: Record<string, { credits: number; priceEnvKey: string }> = {
 
 function stripe() {
   const key = (process.env.STRIPE_SECRET_KEY ?? "").replace(/\s/g, "");
-  if (!key) throw new Error("STRIPE_SECRET_KEY ayarlanmamış");
+  if (!key) throw new Error("STRIPE_SECRET_KEY non configurée");
   return new Stripe(key, { apiVersion: "2026-06-24.dahlia" });
 }
 
@@ -21,17 +21,17 @@ export async function POST(req: NextRequest) {
     const body = await req.json() as { plan?: string };
     plan = body.plan ?? "";
   } catch {
-    return NextResponse.json({ error: "Geçersiz istek" }, { status: 400 });
+    return NextResponse.json({ error: "Requête invalide" }, { status: 400 });
   }
 
   const planConfig = PLANS[plan];
-  if (!planConfig) return NextResponse.json({ error: "Geçersiz plan: pro veya acente olmalı" }, { status: 400 });
+  if (!planConfig) return NextResponse.json({ error: "Forfait invalide : doit être pro ou acente" }, { status: 400 });
 
   const priceId = (process.env[planConfig.priceEnvKey] ?? "").trim();
-  if (!priceId) return NextResponse.json({ error: `${planConfig.priceEnvKey} ayarlanmamış` }, { status: 500 });
+  if (!priceId) return NextResponse.json({ error: `${planConfig.priceEnvKey} non configurée` }, { status: 500 });
 
   const user = await getAuthUser();
-  if (!user) return NextResponse.json({ error: "Giriş yapmanız gerekiyor" }, { status: 401 });
+  if (!user) return NextResponse.json({ error: "Vous devez être connecté" }, { status: 401 });
 
   const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "https://vista-umber-mu.vercel.app").trim().replace(/\/$/, "");
 

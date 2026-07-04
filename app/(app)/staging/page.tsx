@@ -18,7 +18,7 @@ type DbListing = {
 function StagingCard({ l }: { l: DbListing }) {
   const { lang } = useLang();
   const [showAfter, setShowAfter] = useState(true);
-  const tr = lang === "tr";
+  const fr = lang === "fr";
   const before = l.enhanced_url;
   const after = l.staged_url!;
 
@@ -32,18 +32,18 @@ function StagingCard({ l }: { l: DbListing }) {
           className="aspect-video w-full object-cover transition-opacity duration-300"
         />
         <span className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[11px] font-medium ${showAfter ? "bg-primary text-primary-foreground" : "bg-black/45 text-white"}`}>
-          {showAfter ? (tr ? "Sonra" : "After") : (tr ? "Önce" : "Before")}
+          {showAfter ? (fr ? "Après" : "After") : (fr ? "Avant" : "Before")}
         </span>
         <button
           onClick={() => setShowAfter((v) => !v)}
           className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-xs font-medium text-foreground shadow transition hover:scale-105"
         >
           <ArrowLeftRight className="h-3.5 w-3.5" />
-          {showAfter ? (tr ? "Önce'yi gör" : "See before") : (tr ? "Sonra'yı gör" : "See after")}
+          {showAfter ? (fr ? "Voir avant" : "See before") : (fr ? "Voir après" : "See after")}
         </button>
         {!before && showAfter === false && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-xs text-white">
-            {tr ? "Orijinal fotoğraf yok" : "No original photo"}
+            {fr ? "Pas de photo originale" : "No original photo"}
           </div>
         )}
       </div>
@@ -75,21 +75,21 @@ export default function StagingPage() {
       });
   }, []);
 
-  const tr = lang === "tr";
+  const fr = lang === "fr";
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="font-display text-2xl font-semibold tracking-tight">
-            {tr ? "Sanal Staging" : "Virtual Staging"}
+            {fr ? "Home Staging Virtuel" : "Virtual Staging"}
           </h2>
           <p className="text-sm text-muted-foreground">
-            {tr ? "Boş odaları saniyeler içinde döşe. Önce/Sonra'yı karşılaştır." : "Furnish empty rooms in seconds. Compare before & after."}
+            {fr ? "Meublez des pièces vides en quelques secondes. Comparez avant/après." : "Furnish empty rooms in seconds. Compare before & after."}
           </p>
         </div>
         <Link href="/listings">
-          <Button className="gap-2"><Wand2 className="h-4 w-4" />{tr ? "Oda döşe" : "Stage a room"}</Button>
+          <Button className="gap-2"><Wand2 className="h-4 w-4" />{fr ? "Meubler une pièce" : "Stage a room"}</Button>
         </Link>
       </div>
 
@@ -106,15 +106,15 @@ export default function StagingPage() {
         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card py-24 text-center">
           <Wand2 className="h-10 w-10 text-muted-foreground/40" />
           <p className="mt-4 font-display text-lg font-semibold">
-            {tr ? "Henüz staging yok" : "No staged rooms yet"}
+            {fr ? "Aucun home staging pour l'instant" : "No staged rooms yet"}
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            {tr
-              ? "İlanlar sayfasından bir ilan ekle ve sanal staging adımını çalıştır."
+            {fr
+              ? "Ajoutez une annonce depuis la page Annonces et lancez l'étape de home staging virtuel."
               : "Add a listing on the Listings page and run the virtual staging step."}
           </p>
           <Link href="/listings" className="mt-5">
-            <Button className="gap-2"><Wand2 className="h-4 w-4" />{tr ? "Staging başlat" : "Start staging"}</Button>
+            <Button className="gap-2"><Wand2 className="h-4 w-4" />{fr ? "Démarrer le home staging" : "Start staging"}</Button>
           </Link>
         </div>
       ) : (

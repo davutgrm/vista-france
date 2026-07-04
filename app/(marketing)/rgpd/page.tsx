@@ -9,7 +9,7 @@ export default function RgpdPage() {
           <h2 className="mb-3 text-lg font-semibold">Responsable du traitement</h2>
           <p>
             <strong>Visuimo</strong><br />
-            Contact : <a href="mailto:contact@visuimo.fr" className="text-primary underline">contact@visuimo.fr</a>
+            Contact : <a href="mailto:davutsenol.fr@gmail.com" className="text-primary underline">davutsenol.fr@gmail.com</a>
           </p>
         </section>
 
@@ -50,7 +50,7 @@ export default function RgpdPage() {
             <li><strong>Limitation</strong> — restreindre le traitement dans certains cas</li>
           </ul>
           <p className="mt-3">
-            Pour exercer vos droits : <a href="mailto:contact@visuimo.fr" className="text-primary underline">contact@visuimo.fr</a>
+            Pour exercer vos droits : <a href="mailto:davutsenol.fr@gmail.com" className="text-primary underline">davutsenol.fr@gmail.com</a>
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
             En cas de litige, vous pouvez saisir la <strong>CNIL</strong> (Commission Nationale de l&apos;Informatique et des Libertés) : <span className="font-medium">www.cnil.fr</span>

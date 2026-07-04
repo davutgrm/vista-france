@@ -34,10 +34,10 @@ type DbListing = {
 };
 
 const statusLabel = {
-  queued:    { tr: "Kuyrukta",        en: "Queued" },
-  enhancing: { tr: "İyileştiriliyor", en: "Enhancing" },
-  staged:    { tr: "Döşendi",         en: "Staged" },
-  ready:     { tr: "Hazır",           en: "Ready" },
+  queued:    { fr: "En file d'attente", en: "Queued" },
+  enhancing: { fr: "Amélioration en cours", en: "Enhancing" },
+  staged:    { fr: "Meublé",         en: "Staged" },
+  ready:     { fr: "Prêt",           en: "Ready" },
 } as const;
 
 const statusTone = {
@@ -73,7 +73,7 @@ export default function ListingsPage() {
     const fd = new FormData(form);
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { setAddError("Oturum açık değil"); setSaving(false); return; }
+    if (!user) { setAddError("Vous n'êtes pas connecté"); setSaving(false); return; }
     const { error } = await supabase.from("listings").insert({
       user_id: user.id,
       address: (fd.get("address") as string).trim(),
@@ -90,14 +90,14 @@ export default function ListingsPage() {
   }
 
   const m = {
-    tr: {
-      title: "İlanlar", sub: "Tüm portföyün ve görselleştirme durumları.",
-      add: "Yeni ilan", all: "Tümü",
-      emptyTitle: "Henüz ilan yok", emptySub: "İlk ilanını ekleyerek başla.",
-      modalTitle: "Yeni ilan ekle",
-      fAddress: "Adres", fDistrict: "Semt / İlçe", fPrice: "Fiyat",
-      fBeds: "Oda sayısı", fArea: "Alan (m²)",
-      cancel: "İptal", save: "Kaydet",
+    fr: {
+      title: "Annonces", sub: "Tout votre portefeuille et l'état de la visualisation.",
+      add: "Nouvelle annonce", all: "Toutes",
+      emptyTitle: "Aucune annonce pour l'instant", emptySub: "Ajoutez votre première annonce pour commencer.",
+      modalTitle: "Ajouter une nouvelle annonce",
+      fAddress: "Adresse", fDistrict: "Quartier / Secteur", fPrice: "Prix",
+      fBeds: "Nombre de pièces", fArea: "Surface (m²)",
+      cancel: "Annuler", save: "Enregistrer",
     },
     en: {
       title: "Listings", sub: "Your whole portfolio and its visualization status.",
@@ -218,7 +218,7 @@ export default function ListingsPage() {
                   <Link href={`/test?listing=${l.id}`} className="mt-3 block">
                     <Button variant="outline" size="sm" className="w-full gap-1.5">
                       <Wand2 className="h-3.5 w-3.5" />
-                      {lang === "tr" ? "Görselleştir" : "Visualize"}
+                      {lang === "fr" ? "Visualiser" : "Visualize"}
                     </Button>
                   </Link>
                 )}

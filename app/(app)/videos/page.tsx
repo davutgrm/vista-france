@@ -56,23 +56,23 @@ export default function VideosPage() {
       });
   }, []);
 
-  const tr = lang === "tr";
+  const fr = lang === "fr";
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="font-display text-2xl font-semibold tracking-tight">
-            {tr ? "Videolar" : "Videos"}
+            {fr ? "Vidéos" : "Videos"}
           </h2>
           <p className="text-sm text-muted-foreground">
-            {tr ? "İlanlarından üretilen tanıtım videoları." : "Tour videos generated from your listings."}
+            {fr ? "Vidéos de présentation générées à partir de vos annonces." : "Tour videos generated from your listings."}
           </p>
         </div>
         <Link href="/listings">
           <Button className="gap-2">
             <Clapperboard className="h-4 w-4" />
-            {tr ? "Video üret" : "Generate video"}
+            {fr ? "Générer une vidéo" : "Generate video"}
           </Button>
         </Link>
       </div>
@@ -93,17 +93,17 @@ export default function VideosPage() {
         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card py-24 text-center">
           <Clapperboard className="h-10 w-10 text-muted-foreground/40" />
           <p className="mt-4 font-display text-lg font-semibold">
-            {tr ? "Henüz video yok" : "No videos yet"}
+            {fr ? "Aucune vidéo pour l'instant" : "No videos yet"}
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            {tr
-              ? "İlanlar sayfasından bir ilan ekle ve görselleştirme adımlarını çalıştır."
+            {fr
+              ? "Ajoutez une annonce depuis la page Annonces et lancez les étapes de visualisation."
               : "Add a listing on the Listings page and run the visualisation steps."}
           </p>
           <Link href="/listings" className="mt-5">
             <Button className="gap-2">
               <Clapperboard className="h-4 w-4" />
-              {tr ? "Video üret" : "Generate video"}
+              {fr ? "Générer une vidéo" : "Generate video"}
             </Button>
           </Link>
         </div>
@@ -115,7 +115,7 @@ export default function VideosPage() {
                 <Thumb l={l} className="aspect-video w-full" />
                 <span className="absolute inset-0 bg-black/15" />
                 <a href={l.video_url} target="_blank" rel="noopener noreferrer"
-                  className="absolute inset-0 grid place-items-center" aria-label={tr ? "Videoyu oynat" : "Play video"}>
+                  className="absolute inset-0 grid place-items-center" aria-label={fr ? "Lire la vidéo" : "Play video"}>
                   <span className="grid h-14 w-14 place-items-center rounded-full bg-white/90 text-foreground shadow-pop transition group-hover:scale-105">
                     <Play className="h-6 w-6 translate-x-0.5 fill-current" />
                   </span>
@@ -130,7 +130,7 @@ export default function VideosPage() {
                   <a href={l.video_url} target="_blank" rel="noopener noreferrer"
                     className="ml-auto inline-flex items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-[11px] font-medium text-secondary-foreground transition hover:bg-primary hover:text-primary-foreground">
                     <ExternalLink className="h-3 w-3" />
-                    {tr ? "Aç" : "Open"}
+                    {fr ? "Ouvrir" : "Open"}
                   </a>
                 </div>
               </div>

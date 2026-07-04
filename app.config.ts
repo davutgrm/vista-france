@@ -1,6 +1,6 @@
 /**
- * app.config.ts — single source of truth (bilingual { tr, en }).
- * Run `/setup` (or "bu projeyi kur") to rebrand + wire your keys.
+ * app.config.ts — single source of truth (bilingual { fr, en }).
+ * Run `/setup` to rebrand + wire your keys.
  */
 import type { L } from "@/lib/i18n/config";
 
@@ -19,9 +19,9 @@ export interface AppConfig {
 
 export const appConfig: AppConfig = {
   name: "Visuimo",
-  tagline: { tr: "Her mülk görülmeyi hak eder.", en: "Chaque bien mérite d'être vu." },
+  tagline: { fr: "Chaque bien mérite d'être vu.", en: "Every property deserves to be seen." },
   description: {
-    tr: "Visuimo, emlak ilanı fotoğraflarını pırıl pırıl görsellere, sanal mobilyalı odalara ve tanıtım videolarına dönüştürür — tek stüdyoda.",
+    fr: "Visuimo transforme les photos d'annonces immobilières en visuels impeccables, pièces meublées virtuellement et vidéos de présentation — dans un seul studio.",
     en: "Visuimo turns listing photos into polished images, virtually staged rooms and tour videos — in one studio.",
   },
   domain: "visuimo.fr",
@@ -29,53 +29,53 @@ export const appConfig: AppConfig = {
   accentName: "blue",
 
   marketing: {
-    badge: { tr: "Emlak görsel stüdyosu", en: "Real-estate visual studio" },
-    heroTitle: { tr: "İlanı çekmek 5 dakika.", en: "Shoot a listing in 5 minutes." },
-    heroAccent: { tr: "Satması artık daha hızlı.", en: "Sell it far faster." },
+    badge: { fr: "Studio visuel immobilier", en: "Real-estate visual studio" },
+    heroTitle: { fr: "Photographier un bien : 5 minutes.", en: "Shoot a listing in 5 minutes." },
+    heroAccent: { fr: "Le vendre : bien plus vite.", en: "Sell it far faster." },
     heroSubtitle: {
-      tr: "Telefonla çekilmiş fotoğrafları yükle; Visuimo ışığı düzeltir, boş odayı sanal mobilyayla döşer ve ilana özel bir tanıtım videosu üretir. Stüdyo da drone da gerekmez.",
+      fr: "Téléchargez des photos prises au téléphone ; Visuimo corrige la lumière, meuble virtuellement les pièces vides et génère une vidéo de présentation pour l'annonce. Ni studio, ni drone nécessaire.",
       en: "Upload phone photos; Visuimo fixes the light, stages empty rooms with virtual furniture, and produces a listing tour video. No studio, no drone required.",
     },
-    heroCtaPrimary: { tr: "İlanı görselleştir", en: "Visualize a listing" },
-    heroCtaSecondary: { tr: "Örnekleri gör", en: "See examples" },
+    heroCtaPrimary: { fr: "Visualiser un bien", en: "Visualize a listing" },
+    heroCtaSecondary: { fr: "Voir des exemples", en: "See examples" },
     features: [
-      { icon: "wand-sparkles", title: { tr: "Foto iyileştirme", en: "Photo enhancement" }, body: { tr: "Loş, eğri, dağınık fotoğraflar tek tıkla profesyonel ilan görseline dönüşür.", en: "Dim, crooked, cluttered photos become professional listing shots in one tap." } },
-      { icon: "armchair", title: { tr: "Sanal staging", en: "Virtual staging" }, body: { tr: "Boş daireyi saniyeler içinde döşe — alıcı evi hayal etsin diye değil, görsün diye.", en: "Furnish an empty flat in seconds — so buyers don't imagine the home, they see it." } },
-      { icon: "clapperboard", title: { tr: "Tanıtım videosu", en: "Tour video" }, body: { tr: "Fotoğraflardan akıcı, müzikli bir ilan videosu üretilir; Reels ve portföye hazır.", en: "A smooth, scored listing video is generated from the photos — ready for Reels and your listings." } },
-      { icon: "panels-top-left", title: { tr: "Sanal tur", en: "Virtual tour" }, body: { tr: "Oda oda gezilebilen bir tur linki — paylaş, alıcı evden çıkmadan gezsin.", en: "A room-by-room tour link — share it, buyers walk through without leaving home." } },
-      { icon: "images", title: { tr: "Çoklu ilan yönetimi", en: "Multi-listing manager" }, body: { tr: "Tüm portföyün tek panelde; hangi ilan hangi aşamada bir bakışta.", en: "Your whole portfolio in one panel — see which listing is at which stage at a glance." } },
-      { icon: "stamp", title: { tr: "Marka filigranı", en: "Branded watermark" }, body: { tr: "Her görsel ve videoya ofis logon ve iletişimin otomatik işlenir.", en: "Your office logo and contact are auto-applied to every image and video." } },
+      { icon: "wand-sparkles", title: { fr: "Amélioration photo", en: "Photo enhancement" }, body: { fr: "Des photos sombres, de travers ou en désordre deviennent des visuels d'annonce professionnels en un clic.", en: "Dim, crooked, cluttered photos become professional listing shots in one tap." } },
+      { icon: "armchair", title: { fr: "Home staging virtuel", en: "Virtual staging" }, body: { fr: "Meublez un appartement vide en quelques secondes — pour que l'acheteur voie le logement, pas seulement l'imagine.", en: "Furnish an empty flat in seconds — so buyers don't imagine the home, they see it." } },
+      { icon: "clapperboard", title: { fr: "Vidéo de présentation", en: "Tour video" }, body: { fr: "Une vidéo d'annonce fluide et musicale est générée à partir des photos ; prête pour Reels et votre portefeuille.", en: "A smooth, scored listing video is generated from the photos — ready for Reels and your listings." } },
+      { icon: "panels-top-left", title: { fr: "Visite virtuelle", en: "Virtual tour" }, body: { fr: "Un lien de visite pièce par pièce — partagez-le, l'acheteur visite sans quitter son canapé.", en: "A room-by-room tour link — share it, buyers walk through without leaving home." } },
+      { icon: "images", title: { fr: "Gestion multi-annonces", en: "Multi-listing manager" }, body: { fr: "Tout votre portefeuille dans un seul tableau de bord ; voyez en un coup d'œil où en est chaque annonce.", en: "Your whole portfolio in one panel — see which listing is at which stage at a glance." } },
+      { icon: "stamp", title: { fr: "Filigrane de marque", en: "Branded watermark" }, body: { fr: "Le logo et les coordonnées de votre agence sont appliqués automatiquement à chaque visuel et vidéo.", en: "Your office logo and contact are auto-applied to every image and video." } },
     ],
     stats: [
-      { value: "5 dk", label: { tr: "ilan başına görsel", en: "to visualize a listing" } },
-      { value: "0", label: { tr: "stüdyo / drone", en: "studio / drone needed" } },
-      { value: "€0", label: { tr: "ücretsiz başlangıç", en: "to get started" } },
+      { value: "5 min", label: { fr: "pour visualiser une annonce", en: "to visualize a listing" } },
+      { value: "0", label: { fr: "studio / drone nécessaire", en: "studio / drone needed" } },
+      { value: "€0", label: { fr: "pour commencer", en: "to get started" } },
     ],
     pricing: [
-      { name: "Solo", price: "€0", period: "/ay", tagline: { tr: "Bireysel danışman için.", en: "For a solo agent." }, features: [{ tr: "20 kredi / ay", en: "20 credits / mo" }, { tr: "Foto iyileştirme", en: "Photo enhancement" }, { tr: "Sanal staging", en: "Virtual staging" }, { tr: "Portföy paneli", en: "Portfolio panel" }], cta: { tr: "Ücretsiz başla", en: "Get started free" } },
-      { name: "Pro", price: "€29", period: "/ay", tagline: { tr: "Aktif emlakçı için.", en: "For an active agent." }, features: [{ tr: "180 kredi / ay", en: "180 credits / mo" }, { tr: "Foto iyileştirme", en: "Photo enhancement" }, { tr: "Sanal staging + video", en: "Virtual staging + video" }, { tr: "Öncelikli render", en: "Priority render" }], cta: { tr: "Pro'ya geç", en: "Switch to Pro" }, featured: true },
-      { name: "Acente", price: "€69", period: "/ay", tagline: { tr: "Ofis ekibi için.", en: "For the brokerage." }, features: [{ tr: "450 kredi / ay", en: "450 credits / mo" }, { tr: "Pro'daki her şey", en: "Everything in Pro" }, { tr: "Ekip & roller (yakında)", en: "Team & roles (soon)" }, { tr: "API erişimi (yakında)", en: "API access (soon)" }], cta: { tr: "Acente'ye geç", en: "Switch to Agency" } },
+      { name: "Solo", price: "€0", period: "/mois", tagline: { fr: "Pour un agent indépendant.", en: "For a solo agent." }, features: [{ fr: "20 crédits / mois", en: "20 credits / mo" }, { fr: "Amélioration photo", en: "Photo enhancement" }, { fr: "Home staging virtuel", en: "Virtual staging" }, { fr: "Tableau de bord portefeuille", en: "Portfolio panel" }], cta: { fr: "Commencer gratuitement", en: "Get started free" } },
+      { name: "Pro", price: "€29", period: "/mois", tagline: { fr: "Pour un agent actif.", en: "For an active agent." }, features: [{ fr: "180 crédits / mois", en: "180 credits / mo" }, { fr: "Amélioration photo", en: "Photo enhancement" }, { fr: "Home staging virtuel + vidéo", en: "Virtual staging + video" }, { fr: "Rendu prioritaire", en: "Priority render" }], cta: { fr: "Passer à Pro", en: "Switch to Pro" }, featured: true },
+      { name: "Agence", price: "€69", period: "/mois", tagline: { fr: "Pour une équipe d'agence.", en: "For the brokerage." }, features: [{ fr: "450 crédits / mois", en: "450 credits / mo" }, { fr: "Tout ce qui est dans Pro", en: "Everything in Pro" }, { fr: "Équipe & rôles (bientôt)", en: "Team & roles (soon)" }, { fr: "Accès API (bientôt)", en: "API access (soon)" }], cta: { fr: "Passer à Agence", en: "Switch to Agency" } },
     ],
     faq: [
-      { q: { tr: "Ücretsiz deneme var mı?", en: "Is there a free trial?" }, a: { tr: "Evet. Solo plan tamamen ücretsiz, ayda 20 kredi içerir — kredi kartı gerekmez.", en: "Yes. The Solo plan is completely free with 20 credits a month — no credit card required." } },
-      { q: { tr: "Sanal staging dürüst mü?", en: "Is virtual staging honest?" }, a: { tr: "Evet — boş odaya mobilya ekler, mekânın yapısını değiştirmez. Görsellere otomatik 'sanal olarak döşenmiştir' etiketi eklenebilir.", en: "Yes — it adds furniture to an empty room without altering the structure. Images can be auto-labelled 'virtually staged'." } },
-      { q: { tr: "Hangi formatlar çıkıyor?", en: "What does it output?" }, a: { tr: "İyileştirilmiş JPG'ler ve tanıtım videosu (MP4) — doğrudan indir, istediğin portala kendin yükle.", en: "Enhanced JPGs and a tour video (MP4) — download directly and upload to whichever portal you prefer." } },
-      { q: { tr: "Aboneliği iptal edebilir miyim?", en: "Can I cancel anytime?" }, a: { tr: "Evet. Aylık plan tek tıkla iptal edilir; üretilmiş tüm görsel ve videolar senin kalır.", en: "Yes. Monthly plans cancel in one click; every image and video you generated stays yours." } },
+      { q: { fr: "Y a-t-il un essai gratuit ?", en: "Is there a free trial?" }, a: { fr: "Oui. Le plan Solo est entièrement gratuit, avec 20 crédits par mois — sans carte bancaire.", en: "Yes. The Solo plan is completely free with 20 credits a month — no credit card required." } },
+      { q: { fr: "Le home staging virtuel est-il honnête ?", en: "Is virtual staging honest?" }, a: { fr: "Oui — il ajoute du mobilier à une pièce vide sans modifier la structure du lieu. Une mention « meublé virtuellement » peut être ajoutée automatiquement aux visuels.", en: "Yes — it adds furniture to an empty room without altering the structure. Images can be auto-labelled 'virtually staged'." } },
+      { q: { fr: "Quels formats sont produits ?", en: "What does it output?" }, a: { fr: "Des JPG améliorés et une vidéo de présentation (MP4) — téléchargez-les directement et publiez-les sur le portail de votre choix.", en: "Enhanced JPGs and a tour video (MP4) — download directly and upload to whichever portal you prefer." } },
+      { q: { fr: "Puis-je annuler à tout moment ?", en: "Can I cancel anytime?" }, a: { fr: "Oui. L'abonnement mensuel s'annule en un clic ; toutes les images et vidéos générées vous appartiennent.", en: "Yes. Monthly plans cancel in one click; every image and video you generated stays yours." } },
     ],
   },
 
   nav: [
-    { label: { tr: "Stüdyo", en: "Studio" }, href: "/dashboard", icon: "layout-dashboard" },
-    { label: { tr: "İlanlar", en: "Listings" }, href: "/listings", icon: "building-2" },
-    { label: { tr: "Videolar", en: "Videos" }, href: "/videos", icon: "clapperboard" },
-    { label: { tr: "Sanal Staging", en: "Staging" }, href: "/staging", icon: "armchair" },
-    { label: { tr: "Ayarlar", en: "Settings" }, href: "/settings", icon: "settings" },
+    { label: { fr: "Studio", en: "Studio" }, href: "/dashboard", icon: "layout-dashboard" },
+    { label: { fr: "Annonces", en: "Listings" }, href: "/listings", icon: "building-2" },
+    { label: { fr: "Vidéos", en: "Videos" }, href: "/videos", icon: "clapperboard" },
+    { label: { fr: "Home Staging", en: "Staging" }, href: "/staging", icon: "armchair" },
+    { label: { fr: "Paramètres", en: "Settings" }, href: "/settings", icon: "settings" },
   ],
 
   integrations: [
-    { key: "fal", name: "Görsel İşleme", envVars: ["FAL_KEY"], required: false, docsUrl: "https://fal.ai/dashboard/keys", purpose: "Fotoğraf iyileştirme ve sanal staging (görsel üretim)." },
-    { key: "kie", name: "Video Üretimi", envVars: ["KIE_API_KEY"], required: false, docsUrl: "https://kie.ai/api-key", purpose: "Tanıtım videosu oluşturma (görsel → video)." },
-    { key: "supabase", name: "Supabase", envVars: ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"], required: false, docsUrl: "https://supabase.com/dashboard/project/_/settings/api", purpose: "İlan, görsel ve video verilerini depolar." },
+    { key: "fal", name: "Traitement d'image", envVars: ["FAL_KEY"], required: false, docsUrl: "https://fal.ai/dashboard/keys", purpose: "Amélioration photo et home staging virtuel (génération d'images)." },
+    { key: "kie", name: "Génération vidéo", envVars: ["KIE_API_KEY"], required: false, docsUrl: "https://kie.ai/api-key", purpose: "Création de vidéo de présentation (image → vidéo)." },
+    { key: "supabase", name: "Supabase", envVars: ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"], required: false, docsUrl: "https://supabase.com/dashboard/project/_/settings/api", purpose: "Stocke les données des annonces, images et vidéos." },
   ],
 };
 

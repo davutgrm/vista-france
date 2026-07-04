@@ -29,15 +29,15 @@ async function applyPlan(userId: string, plan: string) {
 
 export async function POST(req: NextRequest) {
   if (!process.env.STRIPE_SECRET_KEY) {
-    return NextResponse.json({ error: "STRIPE_SECRET_KEY ayarlanmamış" }, { status: 500 });
+    return NextResponse.json({ error: "STRIPE_SECRET_KEY non configurée" }, { status: 500 });
   }
   if (!process.env.STRIPE_WEBHOOK_SECRET) {
-    return NextResponse.json({ error: "STRIPE_WEBHOOK_SECRET ayarlanmamış" }, { status: 500 });
+    return NextResponse.json({ error: "STRIPE_WEBHOOK_SECRET non configurée" }, { status: 500 });
   }
 
   const body = await req.text();
   const sig = req.headers.get("stripe-signature");
-  if (!sig) return NextResponse.json({ error: "stripe-signature header eksik" }, { status: 400 });
+  if (!sig) return NextResponse.json({ error: "En-tête stripe-signature manquant" }, { status: 400 });
 
   const webhookSecret = (process.env.STRIPE_WEBHOOK_SECRET ?? "").trim();
   let event: Stripe.Event;
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     event = stripe().webhooks.constructEvent(body, sig, webhookSecret);
   } catch (e) {
     console.error("[stripe/webhook] signature error:", e);
-    return NextResponse.json({ error: "Webhook imza doğrulaması başarısız" }, { status: 400 });
+    return NextResponse.json({ error: "Échec de la vérification de la signature du webhook" }, { status: 400 });
   }
 
   try {
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
     }
   } catch (e) {
     console.error("[stripe/webhook] handler error:", e);
-    return NextResponse.json({ error: "İşlem hatası" }, { status: 500 });
+    return NextResponse.json({ error: "Erreur de traitement" }, { status: 500 });
   }
 
   return NextResponse.json({ received: true });

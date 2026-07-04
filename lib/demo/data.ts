@@ -24,7 +24,7 @@ export interface Listing {
 }
 
 export const listings: Listing[] = [
-  { id: "l1", address: "Appartement Avenue Foch, 12e kat", district: "16e Arrondissement, Paris", price: "€450.000", beds: 3, area: 165, status: "ready", photos: 24, video: true, tour: true, hue: "255", scene: "city" },
+  { id: "l1", address: "Appartement Avenue Foch, 12e étage", district: "16e Arrondissement, Paris", price: "€450.000", beds: 3, area: 165, status: "ready", photos: 24, video: true, tour: true, hue: "255", scene: "city" },
   { id: "l2", address: "Villa Vue Mer", district: "Biarritz, Côte Basque", price: "€1.200.000", beds: 5, area: 320, status: "ready", photos: 38, video: true, tour: true, hue: "210", scene: "coast" },
   { id: "l3", address: "Maison avec Jardin", district: "Lyon 6e", price: "€320.000", beds: 4, area: 210, status: "staged", photos: 19, video: false, tour: true, hue: "150", scene: "house" },
   { id: "l4", address: "Loft, Immeuble Haussmannien", district: "Le Marais, Paris", price: "€280.000", beds: 2, area: 95, status: "enhancing", photos: 16, video: false, tour: false, hue: "30", scene: "loft" },
@@ -43,10 +43,10 @@ export interface StudioVideo {
 }
 
 export const videos: StudioVideo[] = [
-  { id: "v1", listing: "Appartement Foch", style: { tr: "Sinematik drone", en: "Cinematic drone" }, duration: "0:42", format: { tr: "Yatay · Portal", en: "Landscape · Portal" }, hue: "255", scene: "city" },
-  { id: "v2", listing: "Villa Biarritz", style: { tr: "Gün batımı turu", en: "Sunset tour" }, duration: "0:55", format: { tr: "Yatay · YouTube", en: "Landscape · YouTube" }, hue: "210", scene: "coast" },
-  { id: "v3", listing: "Appartement Foch", style: { tr: "Hızlı Reels", en: "Snappy Reels" }, duration: "0:18", format: { tr: "Dikey · Instagram", en: "Vertical · Instagram" }, hue: "300", scene: "city" },
-  { id: "v4", listing: "Mas Luberon", style: { tr: "Sakin gezinti", en: "Calm walkthrough" }, duration: "0:38", format: { tr: "Yatay · Portal", en: "Landscape · Portal" }, hue: "110", scene: "vineyard" },
+  { id: "v1", listing: "Appartement Foch", style: { fr: "Drone cinématique", en: "Cinematic drone" }, duration: "0:42", format: { fr: "Paysage · Portail", en: "Landscape · Portal" }, hue: "255", scene: "city" },
+  { id: "v2", listing: "Villa Biarritz", style: { fr: "Visite au coucher du soleil", en: "Sunset tour" }, duration: "0:55", format: { fr: "Paysage · YouTube", en: "Landscape · YouTube" }, hue: "210", scene: "coast" },
+  { id: "v3", listing: "Appartement Foch", style: { fr: "Reels dynamique", en: "Snappy Reels" }, duration: "0:18", format: { fr: "Portrait · Instagram", en: "Vertical · Instagram" }, hue: "300", scene: "city" },
+  { id: "v4", listing: "Mas Luberon", style: { fr: "Visite paisible", en: "Calm walkthrough" }, duration: "0:38", format: { fr: "Paysage · Portail", en: "Landscape · Portal" }, hue: "110", scene: "vineyard" },
 ];
 
 export interface Staging {
@@ -59,10 +59,10 @@ export interface Staging {
 }
 
 export const staging: Staging[] = [
-  { id: "s1", room: { tr: "Oturma odası", en: "Living room" }, listing: "Loft Marais", style: { tr: "İskandinav", en: "Scandinavian" }, beforeHue: "60", afterHue: "255" },
-  { id: "s2", room: { tr: "Yatak odası", en: "Bedroom" }, listing: "Maison Lyon", style: { tr: "Modern minimal", en: "Modern minimal" }, beforeHue: "60", afterHue: "150" },
-  { id: "s3", room: { tr: "Mutfak", en: "Kitchen" }, listing: "Studio Nice", style: { tr: "Sıcak ahşap", en: "Warm wood" }, beforeHue: "60", afterHue: "75" },
-  { id: "s4", room: { tr: "Çalışma odası", en: "Home office" }, listing: "Appartement Foch", style: { tr: "Endüstriyel", en: "Industrial" }, beforeHue: "60", afterHue: "210" },
+  { id: "s1", room: { fr: "Salon", en: "Living room" }, listing: "Loft Marais", style: { fr: "Scandinave", en: "Scandinavian" }, beforeHue: "60", afterHue: "255" },
+  { id: "s2", room: { fr: "Chambre", en: "Bedroom" }, listing: "Maison Lyon", style: { fr: "Minimaliste moderne", en: "Modern minimal" }, beforeHue: "60", afterHue: "150" },
+  { id: "s3", room: { fr: "Cuisine", en: "Kitchen" }, listing: "Studio Nice", style: { fr: "Bois chaleureux", en: "Warm wood" }, beforeHue: "60", afterHue: "75" },
+  { id: "s4", room: { fr: "Bureau", en: "Home office" }, listing: "Appartement Foch", style: { fr: "Industriel", en: "Industrial" }, beforeHue: "60", afterHue: "210" },
 ];
 
 /* ── Render queue (with live progress) ───────────────────────────────────── */
@@ -75,9 +75,9 @@ export interface RenderJob {
   eta: string;
 }
 export const renderQueue: RenderJob[] = [
-  { id: "r1", listing: "Loft Marais", stage: { tr: "Işık & perspektif düzeltme", en: "Light & perspective fix" }, kind: "enhance", progress: 72, eta: "~2 dk" },
-  { id: "r2", listing: "Studio Nice", stage: { tr: "Sıraya alındı", en: "Queued" }, kind: "stage", progress: 0, eta: "~6 dk" },
-  { id: "r3", listing: "Maison Lyon", stage: { tr: "Drone videosu render", en: "Rendering drone video" }, kind: "video", progress: 38, eta: "~4 dk" },
+  { id: "r1", listing: "Loft Marais", stage: { fr: "Correction lumière & perspective", en: "Light & perspective fix" }, kind: "enhance", progress: 72, eta: "~2 min" },
+  { id: "r2", listing: "Studio Nice", stage: { fr: "En file d'attente", en: "Queued" }, kind: "stage", progress: 0, eta: "~6 min" },
+  { id: "r3", listing: "Maison Lyon", stage: { fr: "Rendu de la vidéo drone", en: "Rendering drone video" }, kind: "video", progress: 38, eta: "~4 min" },
 ];
 
 /* ── Portal distribution ─────────────────────────────────────────────────── */
@@ -92,21 +92,21 @@ export const portals: { name: string; live: number; tone: "success" | "warning" 
 export const views14d = [120, 180, 150, 240, 320, 280, 410, 380, 520, 600, 540, 720, 880, 940];
 
 /* ── Inquiries (incoming leads on visualized listings) ───────────────────── */
-export interface Inquiry { id: string; name: string; listing: string; via: "WhatsApp" | "Telefon" | "Portal"; at: string; hot: boolean; }
+export interface Inquiry { id: string; name: string; listing: string; via: "WhatsApp" | "Téléphone" | "Portal"; at: string; hot: boolean; }
 export const inquiries: Inquiry[] = [
-  { id: "q1", name: "Sophie M.", listing: "Villa Biarritz", via: "WhatsApp", at: "12 dk", hot: true },
-  { id: "q2", name: "Marc D.", listing: "Appartement Foch", via: "Portal", at: "40 dk", hot: true },
-  { id: "q3", name: "Diane R.", listing: "Mas Luberon", via: "Telefon", at: "1 sa", hot: false },
-  { id: "q4", name: "Amélie T.", listing: "Appartement Foch", via: "WhatsApp", at: "2 sa", hot: false },
+  { id: "q1", name: "Sophie M.", listing: "Villa Biarritz", via: "WhatsApp", at: "12 min", hot: true },
+  { id: "q2", name: "Marc D.", listing: "Appartement Foch", via: "Portal", at: "40 min", hot: true },
+  { id: "q3", name: "Diane R.", listing: "Mas Luberon", via: "Téléphone", at: "1 h", hot: false },
+  { id: "q4", name: "Amélie T.", listing: "Appartement Foch", via: "WhatsApp", at: "2 h", hot: false },
 ];
 
 export interface DActivity { id: string; who: string; action: L; target: string; at: string; tone: "neutral" | "success" | "warning" | "info"; }
 export const activity: DActivity[] = [
-  { id: "a1", who: "Visuimo", action: { tr: "tanıtım videosunu render etti:", en: "rendered the tour video for" }, target: "Villa Biarritz", at: "2026-06-13T09:05:00Z", tone: "success" },
-  { id: "a2", who: "Sen", action: { tr: "12 fotoğraf yükledi:", en: "uploaded 12 photos to" }, target: "Studio Nice", at: "2026-06-13T08:30:00Z", tone: "info" },
-  { id: "a3", who: "Visuimo", action: { tr: "oturma odasını sanal döşedi:", en: "virtually staged the living room of" }, target: "Loft Marais", at: "2026-06-12T18:40:00Z", tone: "neutral" },
-  { id: "a4", who: "Sistem", action: { tr: "3 fotoğrafta düşük ışık uyardı:", en: "flagged low light on 3 photos of" }, target: "Maison Lyon", at: "2026-06-12T16:10:00Z", tone: "warning" },
-  { id: "a5", who: "Visuimo", action: { tr: "sanal turu yayınladı:", en: "published the virtual tour for" }, target: "Appartement Foch", at: "2026-06-12T11:25:00Z", tone: "success" },
+  { id: "a1", who: "Visuimo", action: { fr: "a généré la vidéo de présentation de :", en: "rendered the tour video for" }, target: "Villa Biarritz", at: "2026-06-13T09:05:00Z", tone: "success" },
+  { id: "a2", who: "Vous", action: { fr: "a téléversé 12 photos vers :", en: "uploaded 12 photos to" }, target: "Studio Nice", at: "2026-06-13T08:30:00Z", tone: "info" },
+  { id: "a3", who: "Visuimo", action: { fr: "a meublé virtuellement le salon de :", en: "virtually staged the living room of" }, target: "Loft Marais", at: "2026-06-12T18:40:00Z", tone: "neutral" },
+  { id: "a4", who: "Système", action: { fr: "a signalé un faible éclairage sur 3 photos de :", en: "flagged low light on 3 photos of" }, target: "Maison Lyon", at: "2026-06-12T16:10:00Z", tone: "warning" },
+  { id: "a5", who: "Visuimo", action: { fr: "a publié la visite virtuelle de :", en: "published the virtual tour for" }, target: "Appartement Foch", at: "2026-06-12T11:25:00Z", tone: "success" },
 ];
 
 /** Studio month-to-date numbers for the hero. */
@@ -116,7 +116,7 @@ export const studio = {
   inquiriesDelta: "+214%",
   queue: renderQueue.length,
   staged: "94",
-  avgTime: "4dk",
+  avgTime: "4 min",
 };
 
 /* ── Drone-video render jobs (separate panel) ────────────────────────────── */
@@ -131,9 +131,9 @@ export interface DroneJob {
   scene: Scene;
 }
 export const droneJobs: DroneJob[] = [
-  { id: "d1", listing: "Villa Biarritz", style: { tr: "Gün batımı turu", en: "Sunset tour" }, format: { tr: "Yatay · 4K", en: "Landscape · 4K" }, progress: 100, duration: "0:55", hue: "210", scene: "coast" },
-  { id: "d2", listing: "Appartement Foch", style: { tr: "Sinematik drone", en: "Cinematic drone" }, format: { tr: "Dikey · Reels", en: "Vertical · Reels" }, progress: 64, duration: "0:18", hue: "255", scene: "city" },
-  { id: "d3", listing: "Maison Lyon", style: { tr: "Sakin gezinti", en: "Calm walkthrough" }, format: { tr: "Yatay · Portal", en: "Landscape · Portal" }, progress: 28, duration: "0:38", hue: "150", scene: "house" },
+  { id: "d1", listing: "Villa Biarritz", style: { fr: "Visite au coucher du soleil", en: "Sunset tour" }, format: { fr: "Paysage · 4K", en: "Landscape · 4K" }, progress: 100, duration: "0:55", hue: "210", scene: "coast" },
+  { id: "d2", listing: "Appartement Foch", style: { fr: "Drone cinématique", en: "Cinematic drone" }, format: { fr: "Portrait · Reels", en: "Vertical · Reels" }, progress: 64, duration: "0:18", hue: "255", scene: "city" },
+  { id: "d3", listing: "Maison Lyon", style: { fr: "Visite paisible", en: "Calm walkthrough" }, format: { fr: "Paysage · Portail", en: "Landscape · Portal" }, progress: 28, duration: "0:38", hue: "150", scene: "house" },
 ];
 
 /* ── Before/after staging gallery (paired PropertyImage scenes) ──────────── */
@@ -145,9 +145,9 @@ export interface BeforeAfter {
   after: { hue: string; scene: Scene };
 }
 export const beforeAfter: BeforeAfter[] = [
-  { id: "b1", listing: "Loft Marais", style: { tr: "İskandinav", en: "Scandinavian" }, before: { hue: "60", scene: "loft" }, after: { hue: "210", scene: "house" } },
-  { id: "b2", listing: "Villa Biarritz", style: { tr: "Gün batımı", en: "Twilight" }, before: { hue: "210", scene: "coast" }, after: { hue: "40", scene: "coast" } },
-  { id: "b3", listing: "Mas Luberon", style: { tr: "Sıcak ahşap", en: "Warm wood" }, before: { hue: "60", scene: "vineyard" }, after: { hue: "110", scene: "vineyard" } },
+  { id: "b1", listing: "Loft Marais", style: { fr: "Scandinave", en: "Scandinavian" }, before: { hue: "60", scene: "loft" }, after: { hue: "210", scene: "house" } },
+  { id: "b2", listing: "Villa Biarritz", style: { fr: "Coucher de soleil", en: "Twilight" }, before: { hue: "210", scene: "coast" }, after: { hue: "40", scene: "coast" } },
+  { id: "b3", listing: "Mas Luberon", style: { fr: "Bois chaleureux", en: "Warm wood" }, before: { hue: "60", scene: "vineyard" }, after: { hue: "110", scene: "vineyard" } },
 ];
 
 /* ── Inquiries over time, last 14d (pairs with views14d) ─────────────────── */

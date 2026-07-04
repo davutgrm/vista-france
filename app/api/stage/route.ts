@@ -109,19 +109,19 @@ async function detectImageDimensions(url: string): Promise<{ w: number; h: numbe
 
 export async function POST(req: NextRequest) {
   const user = await getAuthUser();
-  if (!user) return NextResponse.json({ error: "Giriş yapmanız gerekiyor" }, { status: 401 });
+  if (!user) return NextResponse.json({ error: "Vous devez être connecté" }, { status: 401 });
 
   const credit = await deductCredits(user.id, CREDIT_COST);
-  if (!credit.ok) return NextResponse.json({ error: "Krediniz yetersiz, planınızı yükseltin" }, { status: 402 });
+  if (!credit.ok) return NextResponse.json({ error: "Crédits insuffisants, veuillez mettre à niveau votre forfait" }, { status: 402 });
 
   const key = getKey();
-  if (!key) return err("FAL_KEY ayarlanmamış", undefined, 500);
+  if (!key) return err("FAL_KEY non configurée", undefined, 500);
 
   let body: { image_url?: string; style?: string; img_w?: number; img_h?: number };
-  try { body = await req.json(); } catch (e) { return err("JSON geçersiz", String(e), 400); }
+  try { body = await req.json(); } catch (e) { return err("JSON invalide", String(e), 400); }
 
   const { image_url, style = "scandinavian", img_w, img_h } = body;
-  if (!image_url) return err("image_url gerekli", undefined, 400);
+  if (!image_url) return err("image_url requis", undefined, 400);
 
   const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "https://vista-umber-mu.vercel.app")
     .split("").filter((c) => c.charCodeAt(0) !== 65279).join("").trim().replace(/\/$/, "");
@@ -175,27 +175,27 @@ export async function POST(req: NextRequest) {
 
     let submitJson: Record<string, unknown>;
     try { submitJson = JSON.parse(text); }
-    catch { return err("fal.ai submit JSON parse hatası", { status: submitRes.status, body: text.slice(0, 300) }); }
+    catch { return err("Erreur de parsing JSON lors de l'envoi à fal.ai", { status: submitRes.status, body: text.slice(0, 300) }); }
 
-    if (!submitRes.ok) return err("fal.ai submit başarısız", { httpStatus: submitRes.status, body: submitJson });
+    if (!submitRes.ok) return err("Échec de l'envoi à fal.ai", { httpStatus: submitRes.status, body: submitJson });
 
     const status_url = submitJson.status_url as string | undefined;
     const response_url = submitJson.response_url as string | undefined;
     const request_id = (submitJson.request_id ?? submitJson.requestId) as string | undefined;
 
     if (!status_url || !response_url) {
-      return err("fal.ai URL'leri dönmedi", { request_id, status_url, response_url, keys: Object.keys(submitJson) });
+      return err("fal.ai n'a pas renvoyé les URLs", { request_id, status_url, response_url, keys: Object.keys(submitJson) });
     }
 
     return NextResponse.json({ request_id, status_url, response_url, status: "queued", style });
-  } catch (e) { return err("fal.ai kuyruğa gönderilemedi", String(e)); }
+  } catch (e) { return err("Impossible d'envoyer à la file fal.ai", String(e)); }
 }
 
 const SHARPEN_MODEL_PATH = "fal-ai/aura-sr";
 
 export async function GET(req: NextRequest) {
   const key = getKey();
-  if (!key) return err("FAL_KEY ayarlanmamış", undefined, 500);
+  if (!key) return err("FAL_KEY non configurée", undefined, 500);
 
   const params = new URL(req.url).searchParams;
   const phase = params.get("phase") === "sharpen" ? "sharpen" : "stage";
@@ -203,7 +203,7 @@ export async function GET(req: NextRequest) {
   const response_url = params.get("response_url");
   const fallback_url = params.get("fallback_url");
 
-  if (!status_url || !response_url) return err("status_url / response_url gerekli", undefined, 400);
+  if (!status_url || !response_url) return err("status_url / response_url requis", undefined, 400);
 
   try {
     const statusRes = await fetch(status_url, { headers: { "Authorization": `Key ${key}` } });
@@ -211,9 +211,9 @@ export async function GET(req: NextRequest) {
 
     let statusJson: Record<string, unknown>;
     try { statusJson = JSON.parse(text); }
-    catch { return err("fal.ai status JSON parse hatası", { httpStatus: statusRes.status, body: text.slice(0, 300) }); }
+    catch { return err("Erreur de parsing JSON du statut fal.ai", { httpStatus: statusRes.status, body: text.slice(0, 300) }); }
 
-    if (!statusRes.ok) return err("fal.ai durum sorgusu başarısız", { httpStatus: statusRes.status, body: statusJson });
+    if (!statusRes.ok) return err("Échec de la requête de statut fal.ai", { httpStatus: statusRes.status, body: statusJson });
 
     const st = ((statusJson.status ?? "unknown") as string).toUpperCase();
 
@@ -222,7 +222,7 @@ export async function GET(req: NextRequest) {
       if (phase === "sharpen" && fallback_url) {
         return NextResponse.json({ status: "completed", staged_url: fallback_url, cost_usd: 0.04, model: MODEL_PATH });
       }
-      return err("fal.ai işlem başarısız", statusJson, 502);
+      return err("Échec du traitement fal.ai", statusJson, 502);
     }
 
     if (st !== "COMPLETED") return NextResponse.json({ status: st.toLowerCase(), phase });
@@ -232,12 +232,12 @@ export async function GET(req: NextRequest) {
 
     let resultJson: Record<string, unknown>;
     try { resultJson = JSON.parse(resultText); }
-    catch { return err("fal.ai result JSON parse hatası", resultText.slice(0, 300), 502); }
+    catch { return err("Erreur de parsing JSON du résultat fal.ai", resultText.slice(0, 300), 502); }
 
     if (phase === "stage") {
       const images = resultJson.images as Array<{ url: string }> | undefined;
       const stagedUrl = images?.[0]?.url ?? null;
-      if (!stagedUrl) return err("Görsel URL yok", resultJson, 502);
+      if (!stagedUrl) return err("URL d'image manquante", resultJson, 502);
 
       // Submit background sharpening as its own queued job instead of blocking this request on it
       try {
@@ -270,8 +270,8 @@ export async function GET(req: NextRequest) {
     const imgObj = (resultJson.image ?? (resultJson.images as Array<{ url: string }> | undefined)?.[0]) as
       { url?: string } | undefined;
     const finalUrl = imgObj?.url ?? fallback_url;
-    if (!finalUrl) return err("Sharpen görsel URL yok", resultJson, 502);
+    if (!finalUrl) return err("URL d'image affinée manquante", resultJson, 502);
 
     return NextResponse.json({ status: "completed", staged_url: finalUrl, cost_usd: 0.04, model: MODEL_PATH });
-  } catch (e) { return err("Durum sorgulanamadı", String(e)); }
+  } catch (e) { return err("Impossible d'interroger le statut", String(e)); }
 }

@@ -20,13 +20,13 @@ function getKieKey(): string | null {
 
 export async function POST(req: NextRequest) {
   const user = await getAuthUser();
-  if (!user) return NextResponse.json({ error: "Giriş yapmanız gerekiyor" }, { status: 401 });
+  if (!user) return NextResponse.json({ error: "Vous devez être connecté" }, { status: 401 });
 
   const credit = await deductCredits(user.id, CREDIT_COST);
-  if (!credit.ok) return NextResponse.json({ error: "Krediniz yetersiz, planınızı yükseltin" }, { status: 402 });
+  if (!credit.ok) return NextResponse.json({ error: "Crédits insuffisants, veuillez mettre à niveau votre forfait" }, { status: 402 });
 
   const kieKey = getKieKey();
-  if (!kieKey) return err("KIE_API_KEY ayarlanmamış", undefined, 500);
+  if (!kieKey) return err("KIE_API_KEY non configurée", undefined, 500);
 
   let image_url: string | undefined;
   let prompt: string | undefined;
@@ -35,10 +35,10 @@ export async function POST(req: NextRequest) {
     image_url = body.image_url;
     prompt = body.prompt;
   } catch (e) {
-    return err("İstek gövdesi JSON değil", String(e), 400);
+    return err("Le corps de la requête n'est pas du JSON", String(e), 400);
   }
 
-  if (!image_url) return err("image_url gerekli", undefined, 400);
+  if (!image_url) return err("image_url requis", undefined, 400);
 
   try {
     const createRes = await fetch(`${KIE_BASE}/api/v1/jobs/createTask`, {
@@ -64,28 +64,28 @@ export async function POST(req: NextRequest) {
     try {
       createData = JSON.parse(text);
     } catch {
-      return err(`Kie.ai geçersiz yanıt (${createRes.status})`, text.slice(0, 300), 502);
+      return err(`Réponse invalide de Kie.ai (${createRes.status})`, text.slice(0, 300), 502);
     }
 
     if (!createRes.ok || createData.code !== 200) {
-      return err("Kie.ai görev oluşturulamadı", createData, 502);
+      return err("Impossible de créer la tâche Kie.ai", createData, 502);
     }
 
     const taskId = createData.data?.taskId;
-    if (!taskId) return err("Kie.ai'den taskId gelmedi", createData, 502);
+    if (!taskId) return err("Kie.ai n'a pas renvoyé de taskId", createData, 502);
 
     return NextResponse.json({ task_id: taskId, status: "queued" });
   } catch (e) {
-    return err("Kie.ai bağlantı hatası", String(e), 502);
+    return err("Erreur de connexion à Kie.ai", String(e), 502);
   }
 }
 
 export async function GET(req: NextRequest) {
   const kieKey = getKieKey();
-  if (!kieKey) return err("KIE_API_KEY ayarlanmamış", undefined, 500);
+  if (!kieKey) return err("KIE_API_KEY non configurée", undefined, 500);
 
   const taskId = new URL(req.url).searchParams.get("task_id");
-  if (!taskId) return err("task_id gerekli", undefined, 400);
+  if (!taskId) return err("task_id requis", undefined, 400);
 
   try {
     const pollRes = await fetch(`${KIE_BASE}/api/v1/jobs/recordInfo?taskId=${taskId}`, {
@@ -97,10 +97,10 @@ export async function GET(req: NextRequest) {
     try {
       pollData = JSON.parse(text);
     } catch {
-      return err("Kie.ai geçersiz durum yanıtı", { httpStatus: pollRes.status, body: text.slice(0, 300) }, 502);
+      return err("Réponse de statut invalide de Kie.ai", { httpStatus: pollRes.status, body: text.slice(0, 300) }, 502);
     }
 
-    if (!pollRes.ok) return err("Kie.ai durum sorgusu başarısız", pollData, 502);
+    if (!pollRes.ok) return err("Échec de la requête de statut Kie.ai", pollData, 502);
 
     const d = pollData.data ?? {};
     const state: string | undefined = d.state;
@@ -110,9 +110,9 @@ export async function GET(req: NextRequest) {
       try {
         const resultUrls = JSON.parse(d.resultJson ?? "{}").resultUrls as string[];
         videoUrl = resultUrls?.[0];
-      } catch { /* resultJson parse hatası */ }
+      } catch { /* erreur de parsing resultJson */ }
 
-      if (!videoUrl) return err("Kie.ai video URL döndürmedi", d, 502);
+      if (!videoUrl) return err("Kie.ai n'a pas renvoyé d'URL vidéo", d, 502);
 
       return NextResponse.json({
         status: "completed",
@@ -124,12 +124,12 @@ export async function GET(req: NextRequest) {
     }
 
     if (state === "fail") {
-      return err("Kie.ai render başarısız", { failMsg: d.failMsg, detail: d }, 502);
+      return err("Échec du rendu Kie.ai", { failMsg: d.failMsg, detail: d }, 502);
     }
 
-    // state: waiting | queuing | generating → devam ediyor
+    // state: waiting | queuing | generating → en cours
     return NextResponse.json({ status: "processing", state: state ?? "unknown" });
   } catch (e) {
-    return err("Durum sorgulanamadı", String(e), 502);
+    return err("Impossible d'interroger le statut", String(e), 502);
   }
 }

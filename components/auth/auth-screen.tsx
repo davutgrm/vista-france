@@ -183,7 +183,7 @@ export function AuthScreen({ mode }: { mode: "login" | "signup" }) {
                 {!isLogin && (
                   <div className="space-y-1.5">
                     <Label htmlFor="name">{ui.fullName}</Label>
-                    <Input id="name" name="name" placeholder={lang === "tr" ? "Adın Soyadın" : "Jane Doe"} />
+                    <Input id="name" name="name" placeholder={lang === "fr" ? "Jean Dupont" : "Jane Doe"} />
                   </div>
                 )}
                 <div className="space-y-1.5">

@@ -26,19 +26,22 @@ the local URL.
 `app.config.ts` drives the brand, the marketing page, the dashboard navigation,
 and the list of integrations this kit expects. Read it before changing UI copy.
 
-## Bilingual (TR + EN)
+## Bilingual (FR + EN)
 
-Every user-facing string is `{ tr: "…", en: "…" }`. When you edit copy, **keep
+Every user-facing string is `{ fr: "…", en: "…" }`. When you edit copy, **keep
 both languages**. Shared UI strings (auth, nav chrome, buttons) live in
 `lib/i18n/dict.ts`. The default language is set in `lib/i18n/config.ts`
-(`DEFAULT_LANG`). A live TR/EN toggle sits in the navbar, dashboard topbar and
-auth pages.
+(`DEFAULT_LANG`, currently `"fr"`). A live FR/EN toggle sits in the navbar,
+dashboard topbar and auth pages. The legal pages (`/gizlilik`,
+`/kullanim-kosullari`, `/sanal-staging-etigi`, `/rgpd`) are French-only static
+pages (no language toggle).
 
 ## Auth
 
-`/login` and `/signup` are real screens but run a **demo bypass** — Supabase
-isn't connected, so submitting (or "Continue with demo") just enters the
-dashboard. Wiring Supabase via setup is what makes them do real auth.
+`/login` and `/signup` are wired to real Supabase auth (PKCE email/password,
+email confirmation via `/auth/callback`). Supabase keys must be present in
+`.env.local` / Vercel env for auth to work — without them, `createClient()`
+will fail at runtime.
 
 ## Demo mode
 

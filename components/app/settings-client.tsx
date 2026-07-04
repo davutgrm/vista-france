@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { CheckCircle2, Zap, Check, Loader2 } from "lucide-react";
-import appConfig from "@/app.config";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
@@ -11,15 +10,15 @@ import { useLang } from "@/components/i18n/language-provider";
 import { createClient } from "@/lib/supabase/client";
 
 const PLANS: { key: string; label: string; price: string; period: string; credits: number; features: string[]; featured: boolean }[] = [
-  { key: "solo",   label: "Solo",   price: "€0",  period: "/ay", credits: 20,  features: ["20 kredi/ay", "Fotoğraf iyileştirme"], featured: false },
-  { key: "pro",    label: "Pro",    price: "€29", period: "/ay", credits: 180, features: ["180 kredi/ay", "Fotoğraf iyileştirme", "Sanal staging", "Video üretimi", "Öncelikli render"], featured: true },
-  { key: "acente", label: "Acente", price: "€69", period: "/ay", credits: 450, features: ["450 kredi/ay", "Pro'daki her şey", "Ekip & roller", "Öncelikli destek"], featured: false },
+  { key: "solo",   label: "Solo",   price: "€0",  period: "/mois", credits: 20,  features: ["20 crédits/mois", "Amélioration photo"], featured: false },
+  { key: "pro",    label: "Pro",    price: "€29", period: "/mois", credits: 180, features: ["180 crédits/mois", "Amélioration photo", "Home staging virtuel", "Génération vidéo", "Rendu prioritaire"], featured: true },
+  { key: "acente", label: "Agence", price: "€69", period: "/mois", credits: 450, features: ["450 crédits/mois", "Tout ce qui est dans Pro", "Équipe & rôles", "Support prioritaire"], featured: false },
 ];
 
 type PlanKey = string;
 
 export function SettingsClient() {
-  const { t, ui } = useLang();
+  const { ui } = useLang();
   const searchParams = useSearchParams();
   const paymentStatus = searchParams.get("payment");
   const paidPlan = searchParams.get("plan");
@@ -59,7 +58,7 @@ export function SettingsClient() {
       if (json.url) {
         window.location.href = json.url;
       } else {
-        setUpgradeError(json.error ?? "Bir hata oluştu");
+        setUpgradeError(json.error ?? "Une erreur est survenue");
         setUpgrading(null);
       }
     } catch (e) {
@@ -78,7 +77,7 @@ export function SettingsClient() {
         <div className="flex items-center gap-3 rounded-xl border border-success/30 bg-success/10 px-4 py-3 text-success">
           <CheckCircle2 className="h-5 w-5 shrink-0" />
           <span className="font-medium">
-            Ödeme başarılı! {paidPlan && `${paidPlan.charAt(0).toUpperCase() + paidPlan.slice(1)} planı aktif edildi.`} Krediniz güncellendi.
+            Paiement réussi ! {paidPlan && `Forfait ${paidPlan.charAt(0).toUpperCase() + paidPlan.slice(1)} activé.`} Vos crédits ont été mis à jour.
           </span>
         </div>
       )}
@@ -87,18 +86,18 @@ export function SettingsClient() {
       <Card>
         <CardHeader>
           <CardTitle>Profil</CardTitle>
-          <p className="text-sm text-muted-foreground">Hesap bilgileri ve kredi durumu.</p>
+          <p className="text-sm text-muted-foreground">Informations de compte et solde de crédits.</p>
         </CardHeader>
         <CardContent className="space-y-4">
           {profile ? (
             <>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <Label>Ad Soyad</Label>
+                  <Label>Nom complet</Label>
                   <Input defaultValue={profile.name} readOnly />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>E-posta</Label>
+                  <Label>E-mail</Label>
                   <Input defaultValue={profile.email} readOnly />
                 </div>
               </div>
@@ -108,13 +107,13 @@ export function SettingsClient() {
                 </span>
                 <div className="flex-1">
                   <p className="font-medium">
-                    {profile.credits} kredi kaldı
+                    {profile.credits} crédits restants
                     <span className="ml-2 rounded-full bg-secondary px-2 py-0.5 text-[11px] font-medium text-secondary-foreground capitalize">
                       {profile.plan}
                     </span>
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    İyileştirme: 1 kr · Staging: 2 kr · Video: 9 kr
+                    Amélioration : 1 cr · Home staging : 2 cr · Vidéo : 9 cr
                   </p>
                 </div>
               </div>
@@ -131,8 +130,8 @@ export function SettingsClient() {
       {/* Plan upgrade */}
       <Card>
         <CardHeader>
-          <CardTitle>Plan</CardTitle>
-          <p className="text-sm text-muted-foreground">Her ay krediler sıfırlanır. İstediğin zaman iptal edebilirsin.</p>
+          <CardTitle>Forfait</CardTitle>
+          <p className="text-sm text-muted-foreground">Les crédits sont renouvelés chaque mois. Vous pouvez annuler à tout moment.</p>
         </CardHeader>
         <CardContent className="space-y-4">
           {upgradeError && (
@@ -153,7 +152,7 @@ export function SettingsClient() {
                 >
                   {plan.featured && (
                     <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-[11px] font-semibold text-primary-foreground">
-                      Popüler
+                      Populaire
                     </span>
                   )}
                   <div className="mb-4">
@@ -162,7 +161,7 @@ export function SettingsClient() {
                       {plan.price}
                       <span className="text-base font-normal text-muted-foreground">{plan.period}</span>
                     </p>
-                    <p className="mt-0.5 text-sm text-muted-foreground">{plan.credits} kredi/ay</p>
+                    <p className="mt-0.5 text-sm text-muted-foreground">{plan.credits} crédits/mois</p>
                   </div>
                   <ul className="mb-5 flex-1 space-y-2">
                     {plan.features.map((f) => (
@@ -174,11 +173,11 @@ export function SettingsClient() {
                   </ul>
                   {isCurrent ? (
                     <div className="flex items-center justify-center gap-1.5 rounded-lg border border-border bg-muted py-2 text-sm font-medium text-muted-foreground">
-                      <CheckCircle2 className="h-4 w-4 text-success" /> Aktif plan
+                      <CheckCircle2 className="h-4 w-4 text-success" /> Forfait actif
                     </div>
                   ) : isDowngrade ? (
                     <div className="flex items-center justify-center rounded-lg border border-border py-2 text-sm text-muted-foreground">
-                      Mevcut planın altında
+                      Inférieur à votre forfait actuel
                     </div>
                   ) : (
                     <Button
@@ -188,7 +187,7 @@ export function SettingsClient() {
                       onClick={() => upgrade(plan.key)}
                     >
                       {upgrading === plan.key && <Loader2 className="h-4 w-4 animate-spin" />}
-                      {plan.label}&apos;a Geç
+                      Passer à {plan.label}
                     </Button>
                   )}
                 </div>
@@ -196,30 +195,25 @@ export function SettingsClient() {
             })}
           </div>
           <p className="text-center text-xs text-muted-foreground">
-            Stripe üzerinden güvenli ödeme · İstediğin zaman iptal · KDV hariç
+            Paiement sécurisé via Stripe · Annulation à tout moment · Hors TVA
           </p>
         </CardContent>
       </Card>
 
-      {/* Brand */}
+      {/* Contact */}
       <Card>
-        <CardHeader>
-          <CardTitle>{ui.brand}</CardTitle>
-          <p className="text-sm text-muted-foreground">{ui.brandHint}</p>
-        </CardHeader>
-        <CardContent className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label>{ui.productName}</Label>
-            <Input defaultValue={appConfig.name} readOnly />
-          </div>
-          <div className="space-y-1.5">
-            <Label>{ui.domain}</Label>
-            <Input defaultValue={appConfig.domain} readOnly />
-          </div>
-          <div className="space-y-1.5 sm:col-span-2">
-            <Label>{ui.tagline}</Label>
-            <Input defaultValue={t(appConfig.tagline)} readOnly />
-          </div>
+        <CardContent className="py-4">
+          <p className="text-sm text-muted-foreground">
+            {ui.contactHint.split(/(davutsenol\.fr@gmail\.com)/).map((part, i) =>
+              part === "davutsenol.fr@gmail.com" ? (
+                <a key={i} href={`mailto:${part}`} className="text-primary underline">
+                  {part}
+                </a>
+              ) : (
+                part
+              )
+            )}
+          </p>
         </CardContent>
       </Card>
 

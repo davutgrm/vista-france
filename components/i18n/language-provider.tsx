@@ -17,7 +17,7 @@ interface LangContextValue {
   toggle: () => void;
   /** Shared UI dictionary for the active language. */
   ui: UIDict;
-  /** Resolve a translatable { tr, en } value to the active language. */
+  /** Resolve a translatable { fr, en } value to the active language. */
   t: (value: L) => string;
 }
 
@@ -28,7 +28,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const saved = localStorage.getItem("lang");
-    if (saved === "tr" || saved === "en") setLangState(saved);
+    if (saved === "fr" || saved === "en") setLangState(saved);
   }, []);
 
   const setLang = useCallback((l: Lang) => {
@@ -38,7 +38,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const toggle = useCallback(
-    () => setLang(lang === "tr" ? "en" : "tr"),
+    () => setLang(lang === "fr" ? "en" : "fr"),
     [lang, setLang],
   );
 

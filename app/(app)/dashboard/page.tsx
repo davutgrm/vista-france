@@ -34,11 +34,11 @@ type DbListing = {
 const STATUS_TONE: Record<string, "neutral" | "warning" | "info" | "success"> = {
   queued: "neutral", enhancing: "warning", staged: "info", ready: "success",
 };
-const STATUS_LABEL: Record<string, { tr: string; en: string }> = {
-  queued: { tr: "Kuyrukta", en: "Queued" },
-  enhancing: { tr: "İyileştiriliyor", en: "Enhancing" },
-  staged: { tr: "Döşendi", en: "Staged" },
-  ready: { tr: "Hazır", en: "Ready" },
+const STATUS_LABEL: Record<string, { fr: string; en: string }> = {
+  queued: { fr: "En file d'attente", en: "Queued" },
+  enhancing: { fr: "Amélioration en cours", en: "Enhancing" },
+  staged: { fr: "Meublé", en: "Staged" },
+  ready: { fr: "Prêt", en: "Ready" },
 };
 
 function Thumb({ l, className }: { l: DbListing; className?: string }) {
@@ -104,13 +104,13 @@ export default function Dashboard() {
   const featured = withVideo[0] ?? listings[0] ?? null;
   const strip = listings.filter((l) => l.id !== featured?.id).slice(0, 4);
 
-  const tr = lang === "tr";
+  const fr = lang === "fr";
 
   const stats = [
-    { icon: Building2,   value: listings.length,   label: tr ? "Toplam ilan"    : "Total listings" },
-    { icon: Armchair,    value: staged.length,      label: tr ? "Staging"        : "Staged" },
-    { icon: Clapperboard,value: withVideo.length,   label: tr ? "Video"          : "Videos" },
-    { icon: Zap,         value: credits?.credits ?? "—", label: tr ? "Kalan kredi"  : "Credits left" },
+    { icon: Building2,   value: listings.length,   label: fr ? "Total des annonces"    : "Total listings" },
+    { icon: Armchair,    value: staged.length,      label: fr ? "Home staging"        : "Staged" },
+    { icon: Clapperboard,value: withVideo.length,   label: fr ? "Vidéos"          : "Videos" },
+    { icon: Zap,         value: credits?.credits ?? "—", label: fr ? "Crédits restants"  : "Credits left" },
   ];
 
   return (
@@ -122,14 +122,14 @@ export default function Dashboard() {
           <div className="flex items-center gap-2.5">
             <Zap className="h-4 w-4 text-primary" />
             <span className="text-sm font-medium tabular-nums">
-              {credits.credits} {tr ? "kredi kaldı" : "credits remaining"}
+              {credits.credits} {fr ? "crédits restants" : "credits remaining"}
             </span>
             <span className="rounded-full bg-secondary px-2 py-0.5 text-[11px] font-medium text-secondary-foreground capitalize">
               {credits.plan}
             </span>
           </div>
           <Link href="/settings" className="text-xs text-muted-foreground transition hover:text-foreground">
-            {tr ? "Planı yükselt →" : "Upgrade plan →"}
+            {fr ? "Améliorer le forfait →" : "Upgrade plan →"}
           </Link>
         </div>
       )}
@@ -143,21 +143,21 @@ export default function Dashboard() {
           <div className="flex flex-col">
             <p className="label-mono flex items-center gap-2 text-muted-foreground">
               <span className="h-1.5 w-1.5 rounded-full bg-primary pulse-dot" />
-              {tr ? "Stüdyo · Bugün" : "Studio · Today"}
+              {fr ? "Studio · Aujourd'hui" : "Studio · Today"}
             </p>
             <h1 className="mt-3 font-display text-[34px] font-semibold leading-[1.05] tracking-tight lg:text-[44px]">
-              {tr ? "Merhaba" : "Hello"}{userName ? `, ${userName}.` : "."}
+              {fr ? "Bonjour" : "Hello"}{userName ? `, ${userName}.` : "."}
             </h1>
             <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
-              {tr
-                ? "Portföyün burada. Fotoğraf yükle; Visuimo ışığı düzeltir, boş odaları döşer ve tanıtım videosunu oluşturur."
+              {fr
+                ? "Votre portefeuille est ici. Téléversez des photos ; Visuimo corrige la lumière, meuble les pièces vides et génère la vidéo de présentation."
                 : "Your portfolio is here. Upload photos; Visuimo fixes the light, stages empty rooms and renders the tour video."}
             </p>
             <div className="mt-5">
               <Link href="/listings">
                 <Button size="lg" className="gap-2">
                   <Wand2 className="h-4 w-4" />
-                  {tr ? "İlan görselleştir" : "Visualize a listing"}
+                  {fr ? "Visualiser une annonce" : "Visualize a listing"}
                 </Button>
               </Link>
             </div>
@@ -198,7 +198,7 @@ export default function Dashboard() {
                       </a>
                     )}
                     <span className="absolute left-3 top-3 rounded-full bg-black/45 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur">
-                      {tr ? "Öne çıkan" : "Featured"}
+                      {fr ? "En vedette" : "Featured"}
                     </span>
                     <Badge tone={STATUS_TONE[featured.status] ?? "neutral"}
                       className="absolute right-3 top-3 capitalize shadow-sm">
@@ -229,10 +229,10 @@ export default function Dashboard() {
               <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 bg-card/50 py-16 text-center">
                 <ImagePlus className="h-8 w-8 text-muted-foreground/40" />
                 <p className="mt-3 text-sm text-muted-foreground">
-                  {tr ? "Henüz ilan yok" : "No listings yet"}
+                  {fr ? "Aucune annonce pour l'instant" : "No listings yet"}
                 </p>
                 <Link href="/listings" className="mt-3">
-                  <Button size="sm" className="gap-2"><Plus className="h-3.5 w-3.5" />{tr ? "İlan ekle" : "Add listing"}</Button>
+                  <Button size="sm" className="gap-2"><Plus className="h-3.5 w-3.5" />{fr ? "Ajouter une annonce" : "Add listing"}</Button>
                 </Link>
               </div>
             )}
@@ -244,10 +244,10 @@ export default function Dashboard() {
       <section>
         <div className="mb-3 flex items-end justify-between">
           <h2 className="font-display text-xl font-semibold tracking-tight">
-            {tr ? "Son İlanlar" : "Recent Listings"}
+            {fr ? "Annonces récentes" : "Recent Listings"}
           </h2>
           <Link href="/listings" className="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground">
-            {tr ? "Tümü" : "All"}
+            {fr ? "Tout" : "All"}
           </Link>
         </div>
 
@@ -258,12 +258,12 @@ export default function Dashboard() {
         ) : recent.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card py-16 text-center">
             <Building2 className="h-10 w-10 text-muted-foreground/40" />
-            <p className="mt-4 font-display text-lg font-semibold">{tr ? "İlan yok" : "No listings"}</p>
+            <p className="mt-4 font-display text-lg font-semibold">{fr ? "Aucune annonce" : "No listings"}</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              {tr ? "İlk ilanını ekleyerek başla." : "Add your first listing to get started."}
+              {fr ? "Ajoutez votre première annonce pour commencer." : "Add your first listing to get started."}
             </p>
             <Link href="/listings" className="mt-5">
-              <Button className="gap-2"><Plus className="h-4 w-4" />{tr ? "İlan ekle" : "Add listing"}</Button>
+              <Button className="gap-2"><Plus className="h-4 w-4" />{fr ? "Ajouter une annonce" : "Add listing"}</Button>
             </Link>
           </div>
         ) : (
@@ -308,7 +308,7 @@ export default function Dashboard() {
       {(loading || staged.length > 0) && (
         <section>
           <h2 className="mb-3 font-display text-xl font-semibold tracking-tight">
-            {tr ? "Sanal Staging — Önce / Sonra" : "Virtual Staging — Before / After"}
+            {fr ? "Home Staging Virtuel — Avant / Après" : "Virtual Staging — Before / After"}
           </h2>
           {loading ? (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -335,14 +335,14 @@ export default function Dashboard() {
                         <Thumb l={l} className="aspect-[4/3] w-full opacity-90 grayscale-[0.35]" />
                       )}
                       <span className="absolute left-1.5 top-1.5 rounded bg-black/55 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur">
-                        {tr ? "Önce" : "Before"}
+                        {fr ? "Avant" : "Before"}
                       </span>
                     </div>
                     <div className="relative">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={l.staged_url!} alt="" className="aspect-[4/3] w-full object-cover" />
                       <span className="absolute right-1.5 top-1.5 rounded bg-primary px-1.5 py-0.5 text-[10px] font-medium text-primary-foreground">
-                        {tr ? "Sonra" : "After"}
+                        {fr ? "Après" : "After"}
                       </span>
                     </div>
                   </div>
@@ -361,10 +361,10 @@ export default function Dashboard() {
         <section>
           <div className="mb-3 flex items-end justify-between">
             <h2 className="font-display text-xl font-semibold tracking-tight">
-              {tr ? "Üretilen Videolar" : "Generated Videos"}
+              {fr ? "Vidéos générées" : "Generated Videos"}
             </h2>
             <Link href="/videos" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-              {tr ? "Tümü" : "All"}
+              {fr ? "Tout" : "All"}
             </Link>
           </div>
           {loading ? (
