@@ -12,10 +12,11 @@ export default function proxy(request: NextRequest) {
     return NextResponse.next({ request });
   }
 
-  // Supabase session cookie: sb-<project>-auth-token
+  // Supabase session cookie: sb-<project>-auth-token (large sessions are
+  // chunked by @supabase/ssr into sb-<project>-auth-token.0, .1, etc.)
   const cookies = request.cookies.getAll();
   const hasSession = cookies.some(
-    (c) => c.name.startsWith("sb-") && c.name.endsWith("-auth-token") && c.value.length > 10
+    (c) => c.name.startsWith("sb-") && /-auth-token(\.\d+)?$/.test(c.name) && c.value.length > 10
   );
 
   if (!hasSession && isProtected) {

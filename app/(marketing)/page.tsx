@@ -5,7 +5,7 @@ import { useState } from "react";
 import {
   ArrowUpRight, ArrowRight, Wand2, Armchair, Clapperboard, PanelsTopLeft,
   Images, Stamp, Check, Play, Sparkles, ArrowLeftRight, Plus, Minus, X,
-  Building2, Compass, Home, Briefcase, Upload, Cpu, Eye, Download,
+  Building2, Compass, Home, Briefcase, Upload, Cpu, Eye, Download, Menu,
 } from "lucide-react";
 import NextImage from "next/image";
 import { LogoMark } from "@/components/ui/logo";
@@ -379,7 +379,7 @@ function TransformDemo({ c }: { c: (typeof content)["fr"] }) {
           <NextImage src={shown} alt={after ? c.tryAfter : c.tryBefore} fill className="object-cover transition-all duration-500" sizes="(max-width: 768px) 90vw, 750px" />
           <button
             onClick={() => setAfter((v) => !v)}
-            className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-[12px] font-medium text-foreground shadow-pop backdrop-blur transition hover:scale-105"
+            className="absolute left-3 top-3 inline-flex min-h-11 items-center gap-1.5 rounded-full bg-white/90 px-3.5 py-2.5 text-[12px] font-medium text-foreground shadow-pop backdrop-blur transition hover:scale-105"
           >
             <ArrowLeftRight className="h-3 w-3" /> {after ? c.tryAfter : c.tryBefore}
           </button>
@@ -404,6 +404,7 @@ export default function VisuimoLanding() {
   const { lang } = useLang();
   const c = content[lang];
   const [open, setOpen] = useState<number | null>(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const showcase = [
     "/images/gallery/living-1-staged.jpg",
     "/images/gallery/bedroom-1-staged.jpg",
@@ -423,12 +424,30 @@ export default function VisuimoLanding() {
             <a href="#what" className="hover:text-foreground transition-colors">{c.nav[0]}</a>
             <a href="#pricing" className="hover:text-foreground transition-colors">{c.nav[1]}</a>
           </nav>
-          <div className="ml-auto flex items-center gap-2 md:ml-7">
-            <LanguageToggle className="mr-1" />
+          <div className="ml-auto flex items-center gap-1.5 sm:gap-2 md:ml-7">
+            <LanguageToggle className="mr-1 hidden sm:inline-flex" />
             <Link href="/login" className="hidden px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground sm:inline-flex">{c.signin}</Link>
-            <Link href="/signup" className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-4 py-2 text-[13px] font-medium text-background transition hover:opacity-90">{c.demo} <ArrowUpRight className="h-3.5 w-3.5" /></Link>
+            <Link href="/signup" className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-3 py-2 text-[13px] font-medium text-background transition hover:opacity-90 sm:px-4">{c.demo} <ArrowUpRight className="hidden h-3.5 w-3.5 sm:inline" /></Link>
+            <button
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              aria-label="Menu"
+              aria-expanded={mobileMenuOpen}
+              className="grid h-11 w-11 shrink-0 place-items-center rounded-md text-foreground sm:hidden"
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
           </div>
         </div>
+        {mobileMenuOpen && (
+          <nav className="border-t border-border bg-background px-5 py-3 sm:hidden">
+            <a href="#what" onClick={() => setMobileMenuOpen(false)} className="block rounded-lg px-2 py-3 text-sm font-medium text-foreground hover:bg-muted">{c.nav[0]}</a>
+            <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="block rounded-lg px-2 py-3 text-sm font-medium text-foreground hover:bg-muted">{c.nav[1]}</a>
+            <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="block rounded-lg px-2 py-3 text-sm font-medium text-foreground hover:bg-muted">{c.signin}</Link>
+            <div className="mt-2 border-t border-border pt-3">
+              <LanguageToggle />
+            </div>
+          </nav>
+        )}
       </header>
 
       {/* ── Hero ────────────────────────────────────────────────────── */}
@@ -604,7 +623,8 @@ export default function VisuimoLanding() {
             <h2 className="mt-4 font-display text-[clamp(28px,4.5vw,48px)] font-semibold leading-[1.04] tracking-tight">{c.compH[0]} <span className="display-accent font-normal">{c.compH[1]}</span></h2>
           </div>
           <div className="overflow-hidden rounded-3xl bg-card shadow-soft ring-1 ring-border">
-            <table className="w-full text-left text-sm">
+            <div className="overflow-x-auto">
+            <table className="w-full min-w-[560px] text-left text-sm">
               <thead>
                 <tr className="border-b border-border">
                   <th className="px-4 py-4 font-medium text-muted-foreground sm:px-6" />
@@ -634,6 +654,7 @@ export default function VisuimoLanding() {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         </div>
       </section>
@@ -702,7 +723,7 @@ export default function VisuimoLanding() {
                 <ul className="mt-6 space-y-2.5">
                   {p.bullets.map((b) => <li key={b} className="flex items-start gap-2 text-[13px]"><Check className={cn("mt-0.5 h-4 w-4 shrink-0", p.featured ? "text-primary" : "text-success")} />{b}</li>)}
                 </ul>
-                <Link href="/signup" className={cn("mt-7 inline-flex w-full items-center justify-center rounded-full px-4 py-2.5 text-[13px] font-medium transition", p.featured ? "bg-primary text-primary-foreground hover:opacity-90" : "ring-1 ring-border hover:bg-muted")}>{p.cta}</Link>
+                <Link href="/signup" className={cn("mt-7 inline-flex min-h-11 w-full items-center justify-center rounded-full px-4 py-2.5 text-[13px] font-medium transition", p.featured ? "bg-primary text-primary-foreground hover:opacity-90" : "ring-1 ring-border hover:bg-muted")}>{p.cta}</Link>
               </article>
             ))}
           </div>
