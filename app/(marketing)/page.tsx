@@ -150,7 +150,7 @@ const content = {
     finaleBody: "Ouvrez le studio, téléversez votre annonce — chaque étape est interactive. Aucune carte requise, l'inscription est gratuite.",
     footTagline: "Le studio visuel immobilier qui rend chaque annonce prête à vendre.",
     footProduct: "Produit", footCompany: "Entreprise", footResources: "Ressources", footLegal: "Mentions légales",
-    footMadeIn: "Conçu à Toulouse",
+    footMadeIn: "Conçu en France",
   },
   en: {
     nav: ["What it does", "Pricing"],
@@ -278,7 +278,7 @@ const content = {
     finaleBody: "Open the studio, upload a listing — every step is interactive. No card required, signup is free.",
     footTagline: "The real-estate visual studio that makes every listing ready to sell.",
     footProduct: "Product", footCompany: "Company", footResources: "Resources", footLegal: "Legal",
-    footMadeIn: "Designed in Toulouse",
+    footMadeIn: "Designed in France",
   },
 };
 
@@ -794,7 +794,7 @@ export default function VisuimoLanding() {
             <p className="label-mono mb-3 text-muted-foreground">{c.footCompany}</p>
             <ul className="space-y-1.5">
               <li><a href="mailto:davutsenol.fr@gmail.com" className="hover:text-foreground">davutsenol.fr@gmail.com</a></li>
-              <li>{lang === "fr" ? "Toulouse, France" : "Toulouse, France"}</li>
+              <li>France</li>
             </ul>
           </div>
         </div>
